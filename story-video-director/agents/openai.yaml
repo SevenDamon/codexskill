@@ -1,4 +1,4 @@
 interface:
   display_name: "故事视频导演"
-  short_description: "把语文课文和故事分阶段拆成可控的 AI 视频素材流程"
+  short_description: "把故事拆成可控视频片段并规划一致性参考资产"
   default_prompt: "Use $story-video-director to turn this story or lesson text into video-ready segments before generating image and Seedance prompts."
