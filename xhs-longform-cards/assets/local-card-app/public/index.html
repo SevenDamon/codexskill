@@ -1,0 +1,983 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>长文转小红书多图</title>
+  <style>
+    :root {
+      --ink: #2f2b25;
+      --muted: #6f665b;
+      --paper: #f7efd9;
+      --paper-deep: #ead8ad;
+      --line: #b79d6a;
+      --red: #9f2f28;
+      --green: #5e7652;
+      --blue: #344f68;
+      --shadow: 0 18px 50px rgba(55, 45, 28, 0.18);
+      --ui-bg: #eee7d8;
+      --panel: #fffaf0;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 20% 10%, rgba(159, 47, 40, 0.08), transparent 28%),
+        linear-gradient(135deg, rgba(94, 118, 82, 0.08), transparent 36%),
+        var(--ui-bg);
+      font-family: "Noto Serif SC", "Source Han Serif SC", "Microsoft YaHei", SimSun, Georgia, serif;
+      min-height: 100vh;
+    }
+
+    button,
+    textarea,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    .app-shell {
+      display: grid;
+      grid-template-columns: minmax(340px, 420px) minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    .control-panel {
+      display: grid;
+      grid-template-rows: auto minmax(360px, 1fr) auto;
+      gap: 18px;
+      padding: 24px;
+      background:
+        linear-gradient(rgba(47, 43, 37, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(47, 43, 37, 0.035) 1px, transparent 1px),
+        var(--panel);
+      background-size: 18px 18px;
+      border-right: 1px solid rgba(80, 62, 34, 0.18);
+      box-shadow: 10px 0 30px rgba(70, 54, 24, 0.08);
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+
+    .brand-block {
+      display: grid;
+      gap: 10px;
+      border-bottom: 3px double rgba(52, 79, 104, 0.45);
+      padding-bottom: 18px;
+    }
+
+    .eyebrow {
+      color: var(--red);
+      font-size: 12px;
+      letter-spacing: 0;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 34px;
+      line-height: 1.08;
+      letter-spacing: 0;
+      color: var(--blue);
+    }
+
+    .status-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      min-height: 28px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 5px 9px;
+      border: 1px solid rgba(82, 66, 38, 0.28);
+      background: rgba(255, 255, 255, 0.54);
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .editor-wrap {
+      display: grid;
+      gap: 12px;
+      min-height: 0;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+
+    label {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    select,
+    input {
+      height: 40px;
+      width: 100%;
+      border: 1px solid rgba(82, 66, 38, 0.28);
+      background: rgba(255, 252, 244, 0.88);
+      color: var(--ink);
+      padding: 0 11px;
+      outline: none;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 360px;
+      height: 100%;
+      resize: none;
+      border: 1px solid rgba(82, 66, 38, 0.28);
+      background:
+        repeating-linear-gradient(to bottom, transparent 0, transparent 31px, rgba(80, 62, 34, 0.09) 32px),
+        rgba(255, 252, 244, 0.86);
+      color: var(--ink);
+      padding: 16px;
+      line-height: 32px;
+      outline: none;
+      box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.34);
+    }
+
+    .actions {
+      display: grid;
+      gap: 10px;
+    }
+
+    .primary-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .btn {
+      min-height: 44px;
+      padding: 0 14px;
+      border: 1px solid rgba(45, 35, 20, 0.22);
+      color: var(--ink);
+      background: #fff8e8;
+      box-shadow: 2px 3px 0 rgba(68, 55, 33, 0.18);
+      transition: transform 150ms ease, box-shadow 150ms ease, background 150ms ease;
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 3px 4px 0 rgba(68, 55, 33, 0.22);
+    }
+
+    .btn:disabled {
+      cursor: wait;
+      opacity: 0.68;
+      transform: none;
+    }
+
+    .btn-primary {
+      background: var(--blue);
+      color: #fffaf0;
+    }
+
+    .btn-red {
+      background: var(--red);
+      color: #fffaf0;
+    }
+
+    .workspace {
+      min-width: 0;
+      padding: 28px;
+      overflow: auto;
+    }
+
+    .cards-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 20px;
+      margin-bottom: 18px;
+    }
+
+    .cards-header h2 {
+      margin: 0;
+      font-size: 20px;
+      color: var(--blue);
+    }
+
+    .cards-header p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .card-rail {
+      display: flex;
+      align-items: flex-start;
+      gap: 24px;
+      min-width: max-content;
+      padding: 4px 4px 28px;
+    }
+
+    .card-unit {
+      width: 450px;
+      display: grid;
+      gap: 12px;
+      flex: 0 0 450px;
+    }
+
+    .xhs-card {
+      width: 450px;
+      height: 600px;
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 14px;
+      padding: 28px;
+      background:
+        linear-gradient(rgba(47, 43, 37, 0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(47, 43, 37, 0.055) 1px, transparent 1px),
+        radial-gradient(circle at 80% 12%, rgba(159, 47, 40, 0.12), transparent 24%),
+        var(--paper);
+      background-size: 20px 20px, 20px 20px, auto, auto;
+      border: 1px solid rgba(72, 54, 24, 0.35);
+      box-shadow: var(--shadow);
+      position: relative;
+      isolation: isolate;
+    }
+
+    .xhs-card::before,
+    .xhs-card::after {
+      content: "";
+      position: absolute;
+      inset: 14px;
+      border: 3px double rgba(52, 79, 104, 0.4);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .xhs-card::after {
+      inset: 22px;
+      border: 1px dashed rgba(159, 47, 40, 0.22);
+    }
+
+    .xhs-card.style-minimal {
+      background:
+        linear-gradient(90deg, rgba(0, 0, 0, 0.055) 1px, transparent 1px),
+        linear-gradient(#ffffff, #f7f7f4);
+      background-size: 36px 36px, auto;
+      border-color: rgba(20, 20, 20, 0.22);
+      box-shadow: 0 18px 42px rgba(0, 0, 0, 0.11);
+    }
+
+    .xhs-card.style-minimal::before {
+      border: 1px solid rgba(0, 0, 0, 0.2);
+    }
+
+    .xhs-card.style-minimal::after {
+      border: 0;
+      inset: auto;
+    }
+
+    .xhs-card.style-minimal .card-title,
+    .xhs-card.style-minimal .drop {
+      color: #111111;
+    }
+
+    .xhs-card.style-minimal .lead-quote {
+      background: #f0f2ef;
+      border-left-color: #6b7c6a;
+      box-shadow: none;
+    }
+
+    .xhs-card.style-healing {
+      background:
+        radial-gradient(circle at 14% 18%, rgba(224, 168, 169, 0.2), transparent 22%),
+        radial-gradient(circle at 84% 20%, rgba(183, 213, 219, 0.28), transparent 24%),
+        linear-gradient(#fdfbf8, #f2edeb);
+      border-color: rgba(164, 183, 167, 0.58);
+      box-shadow: 0 16px 44px rgba(112, 95, 85, 0.14);
+    }
+
+    .xhs-card.style-healing::before {
+      border: 2px solid rgba(164, 183, 167, 0.42);
+      border-radius: 8px;
+    }
+
+    .xhs-card.style-healing::after {
+      border: 1px dashed rgba(224, 168, 169, 0.48);
+      border-radius: 8px;
+    }
+
+    .xhs-card.style-healing .card-title,
+    .xhs-card.style-healing .drop {
+      color: #7a5f5f;
+    }
+
+    .xhs-card.style-healing .lead-quote {
+      background: rgba(255, 255, 255, 0.58);
+      border-left-color: #a4b7a7;
+      box-shadow: 4px 4px 0 rgba(224, 168, 169, 0.18);
+    }
+
+    .xhs-card.style-cute {
+      background:
+        radial-gradient(circle, rgba(255, 255, 255, 0.85) 0 3px, transparent 4px),
+        linear-gradient(135deg, #ffedf0, #fff9d7 56%, #d8f2ff);
+      background-size: 24px 24px, auto;
+      border: 2px solid #6b4423;
+      box-shadow: 0 18px 0 rgba(255, 192, 203, 0.36);
+    }
+
+    .xhs-card.style-cute::before {
+      border: 3px solid rgba(255, 153, 102, 0.66);
+      border-radius: 14px;
+    }
+
+    .xhs-card.style-cute::after {
+      border: 2px dashed rgba(107, 68, 35, 0.34);
+      border-radius: 18px;
+    }
+
+    .xhs-card.style-cute .card-title,
+    .xhs-card.style-cute .drop {
+      color: #6b4423;
+    }
+
+    .xhs-card.style-cute .lead-quote {
+      background: rgba(255, 255, 240, 0.8);
+      border-left-color: #ff9f1c;
+      box-shadow: 5px 5px 0 rgba(135, 206, 235, 0.42);
+    }
+
+    .xhs-card.style-memphis {
+      background:
+        linear-gradient(135deg, rgba(255, 221, 0, 0.82) 0 22%, transparent 22%),
+        radial-gradient(circle at 80% 14%, #f95b8a 0 48px, transparent 50px),
+        linear-gradient(90deg, rgba(0, 82, 255, 0.13) 1px, transparent 1px),
+        #fffaf0;
+      background-size: auto, auto, 18px 18px, auto;
+      border: 3px solid #000000;
+      box-shadow: 10px 10px 0 #0052ff;
+    }
+
+    .xhs-card.style-memphis::before {
+      border: 4px solid #000000;
+      inset: 16px;
+    }
+
+    .xhs-card.style-memphis::after {
+      border: 0;
+      background: repeating-linear-gradient(45deg, #000000 0 2px, transparent 2px 10px);
+      width: 92px;
+      height: 20px;
+      inset: auto 28px 24px auto;
+      opacity: 0.2;
+    }
+
+    .xhs-card.style-memphis .card-title,
+    .xhs-card.style-memphis .drop {
+      color: #000000;
+      text-shadow: 3px 3px 0 #ffdd00;
+    }
+
+    .xhs-card.style-memphis .lead-quote {
+      background: #ffffff;
+      border-left-color: #f95b8a;
+      box-shadow: 6px 6px 0 #50e3c2;
+    }
+
+    .card-topline {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: center;
+      min-height: 26px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .card-index {
+      border-bottom: 1px solid var(--line);
+      color: var(--red);
+      font-weight: 700;
+    }
+
+    .card-title {
+      align-self: start;
+      margin: 0;
+      color: var(--blue);
+      font-size: var(--title-size, 33px);
+      line-height: 1.12;
+      letter-spacing: 0;
+      font-weight: 800;
+    }
+
+    .card-title .drop {
+      float: left;
+      font-size: 1.8em;
+      line-height: 0.76;
+      padding: 7px 7px 0 0;
+      color: var(--red);
+    }
+
+    .card-body {
+      display: grid;
+      gap: 12px;
+      align-content: start;
+      min-height: 0;
+      overflow: hidden;
+      font-size: var(--body-size, 18px);
+      line-height: 1.62;
+    }
+
+    .lead-quote {
+      border-left: 4px solid var(--red);
+      padding: 12px 14px;
+      background: rgba(255, 250, 205, 0.72);
+      box-shadow: 4px 4px 0 rgba(82, 66, 38, 0.12);
+      font-size: 20px;
+      line-height: 1.5;
+    }
+
+    .point-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 10px;
+    }
+
+    .point-list li {
+      display: grid;
+      grid-template-columns: 30px 1fr;
+      gap: 8px;
+      align-items: start;
+    }
+
+    .bullet {
+      display: inline-grid;
+      place-items: center;
+      width: 25px;
+      height: 25px;
+      border: 1px solid rgba(52, 79, 104, 0.5);
+      color: var(--red);
+      background: rgba(255, 255, 255, 0.48);
+      font-size: 13px;
+      font-weight: 700;
+      transform: rotate(-4deg);
+    }
+
+    .mark {
+      color: var(--red);
+      font-weight: 800;
+      text-decoration: underline;
+      text-decoration-color: rgba(159, 47, 40, 0.55);
+      text-decoration-thickness: 2px;
+      text-underline-offset: 3px;
+    }
+
+    .note-box {
+      border: 1px solid rgba(94, 118, 82, 0.45);
+      background: rgba(255, 255, 255, 0.42);
+      padding: 10px 12px;
+      color: var(--green);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .xhs-card.compact .lead-quote {
+      padding: 9px 11px;
+      font-size: 17px;
+      line-height: 1.42;
+    }
+
+    .xhs-card.compact .point-list {
+      gap: 7px;
+    }
+
+    .xhs-card.compact .note-box {
+      padding: 7px 9px;
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: flex-end;
+      align-items: end;
+      gap: 12px;
+      min-height: 36px;
+      max-height: 40px;
+      color: var(--muted);
+      font-size: 12px;
+      border-top: 1px solid rgba(82, 66, 38, 0.18);
+      padding-top: 8px;
+      overflow: hidden;
+    }
+
+    .download-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .download-row .btn {
+      min-height: 40px;
+      font-size: 14px;
+    }
+
+    .empty-state {
+      display: grid;
+      place-items: center;
+      width: min(760px, 100%);
+      min-height: 420px;
+      border: 2px dashed rgba(82, 66, 38, 0.24);
+      background: rgba(255, 250, 240, 0.45);
+      color: var(--muted);
+      text-align: center;
+      padding: 32px;
+    }
+
+    .exporting .control-panel,
+    .exporting .cards-header,
+    .exporting .download-row {
+      display: none !important;
+    }
+
+    .exporting .workspace {
+      padding: 0;
+      overflow: visible;
+      background: transparent;
+    }
+
+    .exporting .card-rail {
+      padding: 0;
+      gap: 0;
+    }
+
+    @media (max-width: 920px) {
+      .app-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .control-panel {
+        position: relative;
+        height: auto;
+        min-height: 680px;
+        border-right: 0;
+        border-bottom: 1px solid rgba(80, 62, 34, 0.18);
+      }
+
+      .workspace {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app-shell">
+    <section class="control-panel" aria-label="控制区">
+      <div class="brand-block">
+        <div class="eyebrow">LOCAL XHS PRESS</div>
+        <h1>长文转<br>多图卡片</h1>
+        <div class="status-strip" aria-live="polite">
+          <span class="pill" id="healthPill">检测截图服务</span>
+          <span class="pill" id="countPill">0 张卡片</span>
+        </div>
+      </div>
+
+      <div class="editor-wrap">
+        <div class="toolbar">
+          <div class="field">
+            <label for="styleSelect">风格</label>
+            <select id="styleSelect">
+              <option value="vintage">复古科教手帐</option>
+              <option value="minimal">极简现代</option>
+              <option value="healing">清新治愈手绘</option>
+              <option value="cute">可爱卡通涂鸦</option>
+              <option value="memphis">孟菲斯几何</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="cardCount">卡片数</label>
+            <select id="cardCount">
+              <option value="auto">自动</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+            </select>
+          </div>
+        </div>
+        <textarea id="sourceText" spellcheck="false"></textarea>
+      </div>
+
+      <div class="actions">
+        <div class="primary-row">
+          <button class="btn btn-primary" id="generateBtn">生成卡片</button>
+          <button class="btn" id="resetBtn">恢复示例</button>
+        </div>
+        <button class="btn btn-red" id="downloadAllBtn">一键下载全部</button>
+      </div>
+    </section>
+
+    <section class="workspace" aria-label="卡片预览">
+      <div class="cards-header">
+        <div>
+          <h2>预览</h2>
+          <p id="summaryText">等待生成</p>
+        </div>
+      </div>
+      <div class="card-rail" id="cardRail">
+        <div class="empty-state">输入长文后生成卡片</div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const sampleText = `很多人做内容时，把“长文转图片”理解成简单复制粘贴：把文章切成几段，塞进模板，再导出几张图片。这个方法看似快，真正发布时却经常失败：第一页没有钩子，中间信息过密，最后一页没有收束，读者只看到一堆字。
+
+更稳定的做法，是先把长文当成一条叙事线。开篇卡负责提出最强问题或结论；核心卡负责拆解原因、方法和证据；总结卡负责把读者带回一个清晰判断。每张卡只承担一个信息任务，视觉上再用标题、标记、引用和列表分层。
+
+本地工具的价值不在于替代大模型写作，而在于把已经验证过的版式、尺寸和导出流程固定下来。只要输入内容足够清楚，工具就能快速生成一组可测试的卡片，并用浏览器截图得到稳定图片。
+
+需要警惕的是，自动拆分不是理解。长文如果结构混乱，生成的卡片也只会把混乱变得更好看。真正影响效果的，仍然是原文是否有明确观点、关键证据和读者收益。工具应该服务判断，而不是掩盖判断。
+
+因此，一套可靠的长文转多图流程应该同时满足三点：内容拆分有逻辑，卡片排版不溢出，图片导出稳定。先把这三件事跑通，再谈更多风格、更多模板和更智能的摘要。`;
+
+    const state = {
+      cards: []
+    };
+
+    const sourceText = document.getElementById('sourceText');
+    const cardRail = document.getElementById('cardRail');
+    const countPill = document.getElementById('countPill');
+    const healthPill = document.getElementById('healthPill');
+    const summaryText = document.getElementById('summaryText');
+    const styleSelect = document.getElementById('styleSelect');
+    const cardCount = document.getElementById('cardCount');
+    const generateBtn = document.getElementById('generateBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const downloadAllBtn = document.getElementById('downloadAllBtn');
+
+    function normalizeText(text) {
+      return text
+        .replace(/\r/g, '')
+        .replace(/[ \t]+\n/g, '\n')
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
+    }
+
+    function splitSentences(text) {
+      const normalized = normalizeText(text);
+      const pieces = normalized
+        .split(/(?<=[。！？!?；;])\s*|\n+/)
+        .map(item => item.trim())
+        .filter(Boolean);
+      return pieces.length ? pieces : [normalized].filter(Boolean);
+    }
+
+    function pickTitle(sentence, fallback) {
+      const clean = sentence.replace(/[“”"'《》]/g, '').trim();
+      const clauses = clean.split(/[，,：:。！？!?；;]/).map(item => item.trim()).filter(Boolean);
+      const candidate = clauses.find(item => item.length >= 6) || clean || fallback;
+      return candidate.length > 22 ? candidate.slice(0, 22) + '…' : candidate;
+    }
+
+    function makeChunks(sentences, targetCount) {
+      const chunks = Array.from({ length: targetCount }, () => []);
+      sentences.forEach((sentence, index) => {
+        chunks[index % targetCount].push(sentence);
+      });
+      return chunks.map(chunk => chunk.join('')).filter(Boolean);
+    }
+
+    function chooseCardCount(sentenceCount) {
+      const requested = cardCount.value;
+      if (requested !== 'auto') return Number(requested);
+      if (sentenceCount <= 5) return 3;
+      if (sentenceCount <= 8) return 4;
+      if (sentenceCount <= 13) return 5;
+      return 6;
+    }
+
+    function trimText(text, maxLength) {
+      const clean = text.replace(/\s+/g, ' ').trim();
+      return clean.length > maxLength ? clean.slice(0, maxLength - 1) + '…' : clean;
+    }
+
+    function buildCards(text) {
+      const sentences = splitSentences(text);
+      if (!sentences.length) return [];
+
+      const total = Math.max(3, Math.min(7, chooseCardCount(sentences.length)));
+      const coreCount = Math.max(1, total - 2);
+      const chunks = makeChunks(sentences.slice(1, -1).length ? sentences.slice(1, -1) : sentences, coreCount);
+      const opener = sentences[0];
+      const closer = sentences[sentences.length - 1] || opener;
+      const today = new Date();
+      const dateText = `${today.getFullYear()}.${String(today.getMonth() + 1).padStart(2, '0')}.${String(today.getDate()).padStart(2, '0')}`;
+
+      const cards = [{
+        type: 'opening',
+        title: pickTitle(opener, '核心问题'),
+        quote: trimText(opener, 86),
+        points: [
+          trimText(sentences[1] || opener, 58),
+          trimText(sentences[2] || closer, 58)
+        ],
+        note: '先建立判断，再进入拆解。',
+        dateText
+      }];
+
+      chunks.forEach((chunk, index) => {
+        const localSentences = splitSentences(chunk);
+        cards.push({
+          type: 'core',
+          title: pickTitle(localSentences[0], `关键拆解 ${index + 1}`),
+          quote: trimText(localSentences[0] || chunk, 68),
+          points: localSentences.slice(0, 4).map(item => trimText(item, 64)),
+          note: index % 2 === 0 ? '把复杂内容压成可读单元。' : '每张卡只保留一个主要任务。',
+          dateText
+        });
+      });
+
+      cards.push({
+        type: 'closing',
+        title: '最后的判断',
+        quote: trimText(closer, 82),
+        points: [
+          '先确认观点，再组织材料。',
+          '先跑通导出，再扩展风格。',
+          trimText(sentences[Math.max(0, sentences.length - 2)] || closer, 58)
+        ],
+        note: '工具只是放大清晰度。',
+        dateText
+      });
+
+      return cards.slice(0, total);
+    }
+
+    function highlightFirstPhrase(text) {
+      const clean = text.trim();
+      const pivot = clean.search(/[，,：:]/);
+      const end = pivot > 2 && pivot < 12 ? pivot : Math.min(8, clean.length);
+      return `<span class="mark">${escapeHtml(clean.slice(0, end))}</span>${escapeHtml(clean.slice(end))}`;
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function cardSizeVars(card) {
+      const pointLength = card.points.join('').length;
+      const titleSize = card.title.length > 16 ? 28 : 33;
+      const bodySize = pointLength > 180 ? 15 : pointLength > 130 ? 16 : 18;
+      return `--title-size:${titleSize}px;--body-size:${bodySize}px;`;
+    }
+
+    function renderCards(cards) {
+      state.cards = cards;
+      countPill.textContent = `${cards.length} 张卡片`;
+      const styleName = styleSelect.options[styleSelect.selectedIndex]?.textContent || '默认风格';
+      summaryText.textContent = cards.length ? `${normalizeText(sourceText.value).length} 字，已拆成 ${cards.length} 张 · ${styleName}` : '等待生成';
+
+      if (!cards.length) {
+        cardRail.innerHTML = '<div class="empty-state">输入长文后生成卡片</div>';
+        return;
+      }
+
+      cardRail.innerHTML = cards.map((card, index) => {
+        const cardId = `card-${index + 1}`;
+        const points = card.points.filter(Boolean).slice(0, 4).map((point, pointIndex) => `
+          <li>
+            <span class="bullet">${pointIndex + 1}</span>
+            <span>${highlightFirstPhrase(point)}</span>
+          </li>
+        `).join('');
+        const firstChar = escapeHtml(card.title.slice(0, 1));
+        const restTitle = escapeHtml(card.title.slice(1));
+        return `
+          <article class="card-unit">
+            <section class="xhs-card style-${styleSelect.value}" id="${cardId}" style="${cardSizeVars(card)}">
+              <div class="card-topline">
+                <span class="card-index">${String(index + 1).padStart(2, '0')} / ${String(cards.length).padStart(2, '0')}</span>
+              </div>
+              <div class="card-body">
+                <h3 class="card-title"><span class="drop">${firstChar}</span>${restTitle}</h3>
+                <div class="lead-quote">${escapeHtml(card.quote)}</div>
+                <ul class="point-list">${points}</ul>
+                <div class="note-box">${escapeHtml(card.note)}</div>
+              </div>
+              <footer class="card-footer">
+                <span>${escapeHtml(card.dateText)}</span>
+              </footer>
+            </section>
+            <div class="download-row">
+              <button class="btn" data-download="${cardId}">下载第 ${index + 1} 张</button>
+            </div>
+          </article>
+        `;
+      }).join('');
+
+      document.querySelectorAll('[data-download]').forEach(button => {
+        button.addEventListener('click', () => downloadCard(button.dataset.download, button));
+      });
+
+      fitCards();
+    }
+
+    function fitCards() {
+      document.querySelectorAll('.xhs-card').forEach(card => {
+        const body = card.querySelector('.card-body');
+        if (!body) return;
+
+        let bodySize = Number.parseFloat(card.style.getPropertyValue('--body-size')) || 18;
+        let titleSize = Number.parseFloat(card.style.getPropertyValue('--title-size')) || 33;
+
+        for (let attempts = 0; body.scrollHeight > body.clientHeight && attempts < 8; attempts += 1) {
+          bodySize = Math.max(13, bodySize - 1);
+          titleSize = Math.max(24, titleSize - 0.8);
+          card.style.setProperty('--body-size', `${bodySize}px`);
+          card.style.setProperty('--title-size', `${titleSize}px`);
+        }
+
+        if (body.scrollHeight > body.clientHeight) {
+          card.classList.add('compact');
+        }
+
+        const list = card.querySelector('.point-list');
+        while (body.scrollHeight > body.clientHeight && list && list.children.length > 2) {
+          list.removeChild(list.lastElementChild);
+        }
+
+        const note = card.querySelector('.note-box');
+        if (body.scrollHeight > body.clientHeight && note && note.textContent.length > 16) {
+          note.textContent = `${note.textContent.slice(0, 15)}…`;
+        }
+      });
+    }
+
+    async function checkHealth() {
+      try {
+        const response = await fetch('/api/health');
+        const data = await response.json();
+        healthPill.textContent = data.ok ? '截图服务可用' : '未找到浏览器';
+      } catch (_error) {
+        healthPill.textContent = '服务未连接';
+      }
+    }
+
+    function makeFilename(cardId) {
+      const title = state.cards[Number(cardId.replace('card-', '')) - 1]?.title || cardId;
+      return `${cardId}-${title}`.replace(/[\\/:*?"<>|]/g, '').replace(/\s+/g, '-').slice(0, 80) + '.png';
+    }
+
+    async function downloadCard(cardId, button) {
+      const originalText = button.textContent;
+      button.disabled = true;
+      button.textContent = '连接中...';
+      try {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        const response = await fetch('/api/screenshot', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            fullHtml: document.documentElement.outerHTML,
+            cardId
+          })
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.error || `服务器返回 ${response.status}`);
+        }
+
+        const blob = await response.blob();
+        const link = document.createElement('a');
+        const objectUrl = URL.createObjectURL(blob);
+        link.href = objectUrl;
+        link.download = makeFilename(cardId);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(objectUrl);
+        button.textContent = '下载成功';
+      } catch (error) {
+        button.textContent = '下载失败';
+        alert(error.message);
+      } finally {
+        setTimeout(() => {
+          button.disabled = false;
+          button.textContent = originalText;
+        }, 900);
+      }
+    }
+
+    async function downloadAll() {
+      const buttons = Array.from(document.querySelectorAll('[data-download]'));
+      if (!buttons.length) {
+        alert('请先生成卡片。');
+        return;
+      }
+      downloadAllBtn.disabled = true;
+      downloadAllBtn.textContent = '正在下载...';
+      for (const button of buttons) {
+        await downloadCard(button.dataset.download, button);
+      }
+      downloadAllBtn.disabled = false;
+      downloadAllBtn.textContent = '一键下载全部';
+    }
+
+    function generate() {
+      const text = normalizeText(sourceText.value);
+      if (!text) {
+        alert('请输入长文内容。');
+        return;
+      }
+      renderCards(buildCards(text));
+    }
+
+    sourceText.value = sampleText;
+    generateBtn.addEventListener('click', generate);
+    resetBtn.addEventListener('click', () => {
+      sourceText.value = sampleText;
+      styleSelect.value = 'vintage';
+      cardCount.value = 'auto';
+      generate();
+    });
+    styleSelect.addEventListener('change', generate);
+    downloadAllBtn.addEventListener('click', downloadAll);
+
+    checkHealth();
+    generate();
+  </script>
+</body>
+</html>

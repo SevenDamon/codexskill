@@ -1,0 +1,8 @@
+interface:
+  display_name: "XHS Longform Cards"
+  short_description: "Turn Chinese long text into local card image workflows."
+  brand_color: "#9F2F28"
+  default_prompt: "Use $xhs-longform-cards to turn this Chinese long-form text into Xiaohongshu-style PNG card images."
+
+policy:
+  allow_implicit_invocation: true
