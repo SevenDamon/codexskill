@@ -1,0 +1,4 @@
+﻿interface:
+  display_name: "产品立项审核"
+  short_description: "新项目开工前的商业判断、MVP收敛和开发文档工作流"
+  default_prompt: "Use $product-kickoff-review to validate this product idea, define the MVP, and create the initial PRD/docs/TODO plan."
