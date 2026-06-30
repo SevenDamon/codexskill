@@ -559,8 +559,7 @@ export async function loadExtendConfig(
   for (const p of paths) {
     try {
       const content = await readFile(p, "utf8");
-      const yaml = extractYamlFrontMatter(content);
-      if (!yaml) continue;
+      const yaml = extractYamlFrontMatter(content) ?? content;
       return parseSimpleYaml(yaml);
     } catch {
       continue;

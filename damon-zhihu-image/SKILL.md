@@ -9,7 +9,24 @@ description: 为知乎回答生成配图，根据用户选择的风格，通过 
 
 ## 前置检查
 
-### 1. 检查 EXTEND.md 是否已配置
+### 1. 检查 API key 是否已配置
+
+```bash
+test -f "$HOME/.damon-skills/.env" && echo "env file exists" || echo "env file missing"
+```
+
+如果未配置，让用户在 `$HOME/.damon-skills/.env` 写入自己的火山方舟 API key：
+
+```bash
+mkdir -p "$HOME/.damon-skills"
+cat > "$HOME/.damon-skills/.env" << 'ENVEOF'
+ARK_API_KEY=replace-with-your-volcengine-ark-api-key
+ENVEOF
+```
+
+不要把真实 `.env` 内容提交到仓库或发送给他人。
+
+### 2. 检查 EXTEND.md 是否已配置
 
 ```bash
 test -f "$HOME/.damon-skills/damon-imagine/EXTEND.md" && echo "configured" || echo "not configured"
@@ -20,15 +37,17 @@ test -f "$HOME/.damon-skills/damon-imagine/EXTEND.md" && echo "configured" || ec
 ```bash
 mkdir -p "$HOME/.damon-skills/damon-imagine"
 cat > "$HOME/.damon-skills/damon-imagine/EXTEND.md" << 'EXTENDEOF'
+---
 # damon-imagine preferences
+version: 1
 default_provider: seedream
 default_quality: 2k
 default_aspect_ratio: 16:9
-default_save_dir: ./zhihu-images
+---
 EXTENDEOF
 ```
 
-### 2. 检查脚本目录
+### 3. 检查脚本目录
 
 ```bash
 ls "$DAMON_ZHIHU_IMAGE_DIR/scripts/main.ts" 2>/dev/null && echo "scripts ready" || echo "scripts missing"
