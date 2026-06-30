@@ -1,0 +1,5 @@
+interface:
+  display_name: "知乎配图生成器"
+  short_description: "为知乎回答和文章段落生成匹配配图"
+  default_prompt: "Use $damon-zhihu-image to generate a 16:9 Zhihu cover image for this paragraph."
+

@@ -1,0 +1,4 @@
+.env
+*.env
+.damon-skills/
+**/zhihu-images/

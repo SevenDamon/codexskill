@@ -4,6 +4,28 @@ This repository stores reusable Codex skills.
 
 ## Skills
 
+### damon-zhihu-image
+
+Zhihu image generation skill for matching article paragraphs with 16:9 illustrations.
+
+Use it when you need:
+
+- cover images for Zhihu answers;
+- illustrations that match article paragraphs;
+- Seedream/Volcengine image generation through local API key configuration.
+
+Path:
+
+```text
+damon-zhihu-image/
+```
+
+Default invocation:
+
+```text
+Use $damon-zhihu-image to generate a 16:9 Zhihu cover image for this paragraph.
+```
+
 ### product-kickoff-review
 
 Product kickoff review workflow for non-technical founders and AI-assisted builders.
@@ -41,7 +63,7 @@ Xiaohongshu long-form card generation skill.
 Copy a skill directory into your local Codex skills folder:
 
 ```powershell
-Copy-Item -Recurse .\product-kickoff-review "$env:USERPROFILE\.codex\skills\product-kickoff-review"
+Copy-Item -Recurse .\damon-zhihu-image "$env:USERPROFILE\.codex\skills\damon-zhihu-image"
 ```
 
 Restart Codex if the skill list does not refresh automatically.
