@@ -6,13 +6,28 @@ This repository stores reusable Codex skills.
 
 ### damon-zhihu-image
 
-Zhihu image generation skill for matching article paragraphs with 16:9 illustrations.
+`damon-zhihu-image` 是一个用于生成知乎配图的 Codex Skill。它会把文章段落、知乎回答草稿或内容提纲转成具体的视觉 prompt，按用户选择的风格生成 16:9 配图，并通过内置脚本调用火山方舟 Seedream 出图。
 
-Use it when you need:
+项目功能：
 
-- cover images for Zhihu answers;
-- illustrations that match article paragraphs;
-- Seedream/Volcengine image generation through local API key configuration.
+- 为知乎回答、文章段落、内容小节生成匹配配图。
+- 根据文本含义生成具体画面，而不是泛泛的装饰图。
+- 支持四种常用风格：摄影合成、扁平插画、极简白底、手绘速写。
+- API key 只放在本地 `.damon-skills/.env`，不会进入仓库。
+
+设计思路：
+
+- `SKILL.md` 负责告诉 Codex 什么时候使用、如何分析文本、如何选择风格。
+- `scripts/main.ts` 和 provider 文件负责稳定执行图片生成，避免每次都临时拼命令。
+- 默认使用 Seedream、16:9、2k 输出，适合知乎配图的展示和压缩场景。
+- 把 prompt 设计和图片调用分开：Codex 先理解内容并写 prompt，脚本再负责调用模型出图。
+
+使用方法：
+
+1. 把 `damon-zhihu-image/` 复制到本地 Codex skills 目录。
+2. 在 `$HOME/.damon-skills/.env` 写入火山方舟 API key：`ARK_API_KEY=...`。
+3. 重启 Codex。
+4. 让 Codex 使用 `$damon-zhihu-image`，并贴上需要配图的段落。
 
 Path:
 
