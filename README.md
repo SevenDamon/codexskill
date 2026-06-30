@@ -8,6 +8,8 @@ This repository stores reusable Codex skills.
 
 `damon-zhihu-image` 是一个用于生成知乎配图的 Codex Skill。它会把文章段落、知乎回答草稿或内容提纲转成具体的视觉 prompt，按用户选择的风格生成 16:9 配图，并通过内置脚本调用火山方舟 Seedream 出图。
 
+![damon-zhihu-image cover](damon-zhihu-image/assets/cover.png)
+
 项目功能：
 
 - 为知乎回答、文章段落、内容小节生成匹配配图。
