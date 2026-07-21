@@ -4,6 +4,58 @@ This repository stores reusable Codex skills.
 
 ## Skills
 
+### chinese-talking-head-recut
+
+`chinese-talking-head-recut` 是一个面向中文散乱口播的重组剪辑 Skill。它会先通过逐字稿识别独立选题，再将一镜到底、存在口误、重复或话题跳跃的长口播，重组为一条或多条可发布的竖屏短视频。
+
+项目功能：
+
+- 从长口播中拆分多个独立主题，而不是只按原时间线切片。
+- 重排钩子、证据、结论和 CTA，并在真正剪辑前让人确认结构。
+- 按词边界删除口误、重复、假开头、铃声和无关支线。
+- 生成中文语义字幕、黄色关键词和独立封面。
+- 逐个检查剪切边界、音频波形、字幕大小和最终输出规格。
+- 对“三个选择”“四个步骤”这类计数型叙事执行强制数量审计，避免标题承诺与正文不一致。
+
+适用于：
+
+- 没有写稿、一镜到底的中文口播；
+- 长口播拆成多条独立选题；
+- 口误、重复、停顿和干扰声较多的原始素材；
+- 需要重排叙事，而不是只做去停顿的口播。
+
+不适合直接处理以屏幕操作为主的课程录屏、直播回放、多机位剧情片，或已经剪好只需视觉包装的视频。
+
+依赖：
+
+- 已安装的 [`video-use`](https://github.com/browser-use/video-use) Skill，用于逐字稿、词边界切片、音频淡化和渲染；
+- FFmpeg / FFprobe；
+- Python 和 Pillow（封面脚本）；
+- ElevenLabs API key（仅在需要新转录时使用，已缓存逐字稿时不会重复调用）。
+
+Path:
+
+```text
+chinese-talking-head-recut/
+```
+
+Default invocation:
+
+```text
+Use $chinese-talking-head-recut to restructure this raw Chinese talking-head recording into publishable short videos.
+```
+
+Windows PowerShell 安装：
+
+```powershell
+git clone https://github.com/SevenDamon/codexskill.git
+cd codexskill
+New-Item -ItemType Directory -Force "$env:USERPROFILE\.codex\skills" | Out-Null
+Copy-Item -Recurse -Force .\chinese-talking-head-recut "$env:USERPROFILE\.codex\skills\chinese-talking-head-recut"
+```
+
+复制完成后重启 Codex，并确认 `video-use` 及其转录环境已正确配置。
+
 ### damon-zhihu-image
 
 `damon-zhihu-image` 是一个用于生成知乎配图的 Codex Skill。它会把文章段落、知乎回答草稿或内容提纲转成具体的视觉 prompt，按用户选择的风格生成 16:9 配图，并通过内置脚本调用火山方舟 Seedream 出图。
@@ -133,6 +185,12 @@ Copy a skill directory into your local Codex skills folder:
 Copy-Item -Recurse .\damon-zhihu-image "$env:USERPROFILE\.codex\skills\damon-zhihu-image"
 ```
 
+例如安装中文口播重剪 Skill：
+
+```powershell
+Copy-Item -Recurse -Force .\chinese-talking-head-recut "$env:USERPROFILE\.codex\skills\chinese-talking-head-recut"
+```
+
 Restart Codex if the skill list does not refresh automatically.
 
 ## Repository Layout
@@ -145,6 +203,8 @@ skill-name/
   agents/
     openai.yaml
   references/
+    ...
+  scripts/
     ...
 ```
 

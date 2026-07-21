@@ -1,0 +1,4 @@
+interface:
+  display_name: "中文口播重剪"
+  short_description: "Restructure raw Chinese monologues into polished shorts"
+  default_prompt: "Use $chinese-talking-head-recut to restructure this raw Chinese talking-head recording into publishable short videos."
