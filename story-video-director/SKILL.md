@@ -23,6 +23,7 @@ Before producing outputs, check the user's request against these risks:
 - The target use case may be missing, making it unclear whether to optimize for classroom fidelity, cinematic impact, brand/story communication, or visual experimentation.
 - Multi-segment generation may drift if characters, objects, scene geography, and visual style are not locked with reference assets before segment prompt generation.
 - The request may skip the human selection/review point.
+- A named or visually identifiable real person may require identity screening before any downstream image or video prompt is written.
 
 If missing information blocks responsible work, ask one concise question. Otherwise state default assumptions and continue.
 
@@ -33,7 +34,7 @@ Use these defaults when the user does not specify them:
 - Purpose: story-to-video planning.
 - Style: restrained cinematic, readable, and generation-friendly.
 - Fidelity: basically faithful to the source, allowing light visual translation.
-- Segment length: 8-12 seconds, never over 15 seconds unless the user explicitly overrides.
+- Segment length: normally 8-12 seconds. Apply the selected Seedance mode's hard limit: 13 seconds for Agent mode with uploaded audio, 15 seconds for video generation with model-generated sound.
 - Segmentation logic: visual event units, not natural paragraphs.
 - Output sequence: diagnose and segment first; do not generate director-note cards or final prompts until the user selects segments.
 - Consistency: for multi-segment stories, create lightweight character/object/scene/visual-style consistency cards before generating per-segment cards.
@@ -57,6 +58,46 @@ If the source is a Chinese lesson text or the user mentions classroom, teaching,
 - Match constraints to the mode: education mode prioritizes fidelity and age-appropriate clarity; cinematic/story mode can use stronger mood, genre language, and visual tension when consistent with the user's source.
 - For multi-segment output, treat consistency reference images as shared assets. Per-segment director-note images should inherit them instead of redesigning characters, objects, or locations.
 - Avoid over-describing faces. Lock stable, observable anchors such as age band, body shape, silhouette, clothing color, key prop, object size, scene layout, and color palette.
+- Treat pose as explicit continuity state, not an aesthetic suggestion. Record each recurring character's support state, foot position, torso direction, hand state, head/gaze, contacts, and screen position.
+- Define each segment as `inherited start state + explicitly allowed pose deltas + required end state`. Any unlisted body, contact, furniture, or prop change is forbidden.
+- Never infer a chair, stool, wall, table, vehicle, or other support merely to make a pose plausible. If a reference image exists, it is the source of truth for pose, contacts, furniture, and spatial relationships.
+- Keep the full continuity state in the internal director-note card. Do not force every constraint onto the visible director-note page.
+- Give director-note image prompts a constraint budget: six content zones plus one short execution strip, one key shot by default, 3-5 short annotations, and no more than five highest-priority restrictions.
+- Keep Seedance prompts concise. State the inherited start, active speaker, one allowed action change, camera behavior, and one compact negative sentence; repeat only the three highest-risk constraints shared with the director-note page.
+- Treat all production assets as conditional inputs. A story, dialogue, or character-and-scene description is enough to begin; reference images, audio, stable tail frames, and previous director-note pages improve later stages but are not prerequisites for the first director-note page.
+- Treat a stable tail frame as a continuation-stage asset only. Treat a previous director-note page as a style/layout anchor only.
+- Lock voice continuity with a voice card when dialogue spans segments. Prefer one completed master audio track cut into semantic segments; when no audio exists, mark timing provisional until audio is finalized.
+
+## Input And Seedance Modes
+
+Support four entry modes:
+
+- Description-first: only characters and scene are described; create a minimal narrative skeleton, character cards, scene card, voice card, and segment plan before prompts.
+- Text-first: a story or dialogue exists but no visual/audio assets; segment first, then design consistency assets.
+- Asset-first: character images, scene images, or audio exist; analyze and lock them before director-note cards.
+- Continuation: a prior video exists; use a nearby stable end frame to inherit immediate pose and composition.
+
+Before segmenting for Seedance, determine or ask for one generation mode when it is not already clear:
+
+- `Agent上传音频`: uploaded audio is required; each audio file must be 13 seconds or shorter.
+- `自带音效视频`: no uploaded audio; each generated video must be 15 seconds or shorter.
+- `暂只做导演板`: plan provisionally and confirm the generation mode before final timing.
+
+If Agent-mode audio exceeds 13 seconds, recommend semantic splitting. Never truncate automatically. If no clean split exists, ask whether to rewrite/re-record, adjust delivery, or explicitly remove a named portion. Include any audio padding inside the 13-second limit. Load [production-modes.md](references/production-modes.md) for templates and detailed rules.
+
+## Real-Person Screening Gate
+
+Before generating a director-note image prompt, reference-image prompt, or Seedance prompt for any named or visually identifiable real person, ask one concise question:
+
+`该角色是否属于政治人物、英烈、明星、司法或公职人员、军警、医护、专家、媒体人、已故名人等真实可识别人物？`
+
+- If no, continue using the provided name, subject to the target platform's rules.
+- If yes, keep the real name only in internal analysis and create stable neutral role aliases for every downstream generation prompt, such as `左侧青年`, `右侧黑衣人物`, `年长学者`, or `画面右侧说话者`.
+- Use the same alias consistently across director-note prompts, reference prompts, Seedance prompts, and segment continuity cards.
+- Do not use indirect identity hints such as `某著名先驱`, `与某人完全相同但不是某人`, or other wording designed to preserve recognition while hiding the name.
+- Do not claim aliasing makes generation permitted. If the reference image or intended likeness remains restricted, switch to a non-identifiable fictional proxy or provide planning-only output.
+
+Load [real-person-screening.md](references/real-person-screening.md) when a named or identifiable real person appears.
 
 ## Workflow
 
@@ -72,6 +113,8 @@ Extract or infer:
 - Audience and content limits when relevant
 - Target total length or target passage
 - Whether the user needs multi-segment consistency and reference images
+- Whether any named or identifiable real person triggers the screening gate and, if so, the approved role aliases
+- Entry mode, available optional assets, Seedance generation mode, actual audio durations, and whether timing is locked or provisional
 - Requested outputs: diagnosis, segment table, director-note cards, GPT Image 2 prompts, Seedance prompts, or revision
 
 If the user only provides a text, begin with diagnosis, narrative skeleton, segment table, and recommended priority segments.
@@ -121,12 +164,14 @@ Output:
 - Reference image prompt plan: which reference images to generate first and what each image should lock.
 - Consistency lock list: what must never change across segments.
 - Allowed variation list: what may change by segment, such as emotion, pose, position, object state, weather, or lighting progression.
+- Pose-state baseline for every recurring character and a no-invented-support/furniture list.
+- Voice consistency card for every recurring speaking character.
 
 Use [consistency-assets.md](references/consistency-assets.md) for detailed templates.
 
 ### 5. Split Into Visual Segments
 
-Create an 8-15 second segment table. Each row must include:
+Create a mode-aware segment table: normally 8-12 seconds, at most 13 seconds in Agent uploaded-audio mode, or at most 15 seconds in model-generated-sound mode. Each row must include:
 
 - Segment number
 - Title
@@ -137,8 +182,11 @@ Create an 8-15 second segment table. Each row must include:
 - Whether to generate
 - Generation risk
 - Mode-specific caution, such as classroom suitability, genre clarity, safety/content boundary, or risk of over-invention
+- Generation mode, actual/planned audio duration, hard limit, timing status, and any required semantic split
 
 Mark some segments as not recommended when they are abstract, redundant, too complex, or not useful for the classroom goal.
+
+For Agent mode, measure the exported audio file duration, not only spoken words. Prefer complete semantic units and natural pauses. Do not silently cut off overflow.
 
 After the table, recommend the highest-priority segments and stop for user selection unless the user explicitly requests all later stages.
 
@@ -148,9 +196,9 @@ Only after the user selects segment numbers, produce one card per selected segme
 
 Use the card format in [output-templates.md](references/output-templates.md).
 
-For GPT Image 2 director-note compatibility, include expanded fields for overall rhythm, key-shot details, cinematography notes, performance notes, lighting/atmosphere, color design, music/sound, and page-text rules.
+Keep the internal card complete, but expose only the fields needed by each downstream artifact. Do not copy the entire card into the director-note image prompt.
 
-For multi-segment work, each card must include inherited reference assets, consistency locks, and allowed variations.
+For multi-segment work, each card must include inherited reference assets, consistency locks, allowed variations, initial pose state, allowed pose deltas, required end pose, and forbidden inferred supports or props.
 
 ### 7. Generate Reference Image Prompts
 
@@ -167,7 +215,9 @@ Reference images are not final video frames. They lock identity, shape, color, s
 
 When requested, generate one image prompt for one selected segment's director-note card. Do not make a single image cover the whole text.
 
-The image prompt should ask for a one-page 16:9 Chinese handwritten director memo, with simplified placeholder figures, an overall rhythm layout, 1-2 key shot sketches, optional overhead blocking for multi-character scenes, inherited reference asset reminders, and short annotations.
+The image prompt should ask for a one-page 16:9 Chinese handwritten director memo with six zones: title, rhythm, one key shot by default, blocking, performance, and end transition; add one short execution strip. Use at most two key shots only when one cannot express the segment.
+
+Keep detailed pose state, selection criteria, exact movement percentages, and long negative lists out of the visible page. Compress them into one pose-lock sentence and no more than five highest-priority restrictions.
 
 Avoid real faces, detailed costumes, detailed storyboard panels, or polished final film stills.
 
@@ -175,14 +225,15 @@ Use the compatible template in [director-note-image-prompt.md](references/direct
 
 ### 9. Generate Seedance Prompts
 
-When requested, generate Seedance text prompts from the same director-note card. Output:
+When requested, generate one concise Seedance prompt from the same director-note card, normally 80-150 Chinese characters excluding dialogue. Include only:
 
-- A standard controlled version
-- A concise high-constraint version
+- Inherited start state and stable role aliases.
+- Active speaker and listener.
+- One allowed action or emotional change.
+- Camera behavior.
+- One compact negative sentence.
 
-Each version must include the main prompt, camera rhythm, negative constraints, one-sentence generation focus, and a reminder to align with the director-note image when image + text are used together.
-
-For multi-segment work, every Seedance prompt must include a consistency lock section that repeats the inherited character/object/scene/style anchors and forbids identity drift.
+Repeat only the three highest-risk constraints already visible on the director-note page. Keep the full continuity state in the internal card and expand it only when a previous generation failed for a specific reason.
 
 ### 10. Revise From Video Feedback
 

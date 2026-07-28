@@ -6,6 +6,32 @@ Load this reference when the user wants multi-segment video generation, parallel
 
 Reference images are shared anchors. They are not final video frames and not director-note pages. Use them to lock identity, object form, scene geography, scale, color, and style before generating per-segment director-note images and Seedance prompts.
 
+Voice is also a shared consistency asset for recurring speaking characters. Prefer a completed master audio performance; otherwise lock a non-identifiable voice profile and stable generation settings.
+
+Pose continuity is a state-transition problem. Do not let each segment redesign a character's body state. Use the reference image or previous stable frame as the baseline, then authorize only named changes.
+
+## Pose-State Continuity Protocol
+
+For every recurring character, record these observable fields:
+
+- Support state: standing, seated, kneeling, lying, walking, leaning, suspended, or other.
+- Feet/base: exact floor position, stance width, step state, and whether movement is allowed.
+- Torso: facing direction, tilt, bend, and body tension.
+- Hands: left/right hand position, gesture, held object, and contact surface.
+- Head and gaze: head direction, eye line, and target.
+- Contacts: chair, floor, wall, table, another character, vehicle, or prop.
+- Screen/spatial position: left/right relationship, distance, depth, and camera-axis side.
+
+For each segment define:
+
+1. `Start pose`: inherit the previous stable end frame or named reference image.
+2. `Allowed pose deltas`: list only the movements authorized in this segment.
+3. `End pose`: specify the stable state required for the next segment.
+4. `Unchanged state`: state that every unlisted field remains fixed.
+5. `Forbidden inference`: list supports, furniture, props, contacts, or locomotion the model must not invent.
+
+When changing camera angle, preserve world-space pose and contacts. A reverse shot changes camera position, not the characters' posture or furniture. When the true final video frame is blurred, blinking, distorted, or mid-phoneme, select a nearby stable frame rather than the literal last frame.
+
 ## Consistency Asset Output
 
 ```text
@@ -55,16 +81,41 @@ Reference images are shared anchors. They are not final video frames and not dir
 运动风格：
 禁止变化：
 
+### 【声音一致性卡】
+角色代号：
+声音来源：已有完整音频 / 固定音色ID / 待生成
+语言与口音：
+年龄感与音色：
+音高范围：
+语速与呼吸感：
+情绪基调：
+句尾习惯：
+固定模型与参数：
+允许变化：
+禁止变化：
+
 ### 【参考图生成顺序】
 1. 角色参考图：
 2. 关键物体参考图：
 3. 场景参考图：
 4. 统一视觉风格参考图：
 5. 合成关系参考图（可选）：
+6. 完整母带或声音一致性卡：
 
 ### 【跨片段一致性锁定】
 
 ### 【允许跨片段变化】
+
+### 【人物基准姿态状态】
+支撑状态：
+双脚/身体基点：
+躯干方向：
+左手/右手：
+头部与视线：
+接触物：
+画面与空间位置：
+
+### 【禁止推断的支撑物与家具】
 ```
 
 ## Character Reference Image Prompt
@@ -72,7 +123,7 @@ Reference images are shared anchors. They are not final video frames and not dir
 ```text
 生成一张角色参考图，用于后续多段 AI 视频保持角色一致。
 
-角色：{角色名}
+角色：{稳定角色代号}
 年龄段：{年龄段}
 体型/轮廓：{体型/轮廓}
 固定服装：{固定服装}
@@ -166,7 +217,7 @@ Reference images are shared anchors. They are not final video frames and not dir
 
 ## Per-Segment Inheritance Block
 
-Use this block inside each director-note input card and Seedance prompt:
+Keep this complete block inside the internal director-note input card. Do not copy it verbatim into the visible director-note image prompt or the default Seedance prompt.
 
 ```text
 【继承参考图】
@@ -181,6 +232,28 @@ Use this block inside each director-note input card and Seedance prompt:
 【允许变化】
 本段只允许改变：
 
+【起始姿态状态】
+继承自：
+支撑状态：
+双脚/身体基点：
+躯干方向：
+左手/右手：
+头部与视线：
+接触物：
+画面与空间位置：
+
+【本段允许的姿态变化】
+
+【本段结束姿态】
+
+【未列出状态】
+以上未明确列出的身体、站位、接触和持物状态全部保持不变。
+
+【禁止推断】
+不得新增未在参考图或设定中出现的座具、家具、支撑物、道具、接触关系或移动方式。
+
 【禁止漂移】
 不得改变人物年龄、体型、服装颜色、关键道具、物体形态、场景方向、统一色彩和镜头质感。
 ```
+
+For the director-note image prompt, compress this block into one pose-lock sentence and an execution strip. For Seedance, include only the inherited start summary, one allowed pose change, camera behavior, and the highest-risk negative constraints. Expand details only to repair a specific observed failure.
