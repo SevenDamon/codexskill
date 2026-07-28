@@ -56,6 +56,8 @@ Only a story, dialogue, plot passage, or character-and-scene description is requ
 
 Seedance timing is mode-aware: Agent mode with uploaded audio has a 13-second hard audio-file limit; video generation with model-generated sound has a 15-second hard video limit. Over-limit audio is split at semantic pauses by default and is never silently truncated.
 
+Every boundary is classified as either a same-shot continuation or a motivated cut. Same-shot continuation inherits a stable end frame plus framing, camera position and motion state, pose, gaze, background crop, and light. Motivated cuts preserve screen direction, world-space pose, and continuous master audio. Large visual jumps are regenerated rather than hidden with decorative transitions.
+
 ## Example Invocation
 
 ```text

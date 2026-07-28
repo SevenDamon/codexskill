@@ -10,6 +10,8 @@ Voice is also a shared consistency asset for recurring speaking characters. Pref
 
 Pose continuity is a state-transition problem. Do not let each segment redesign a character's body state. Use the reference image or previous stable frame as the baseline, then authorize only named changes.
 
+Shot continuity also includes camera state. Lock framing, camera position, axis side, background crop, and whether the camera is fixed, moving, or settled at every segment boundary.
+
 ## Pose-State Continuity Protocol
 
 For every recurring character, record these observable fields:
@@ -254,6 +256,13 @@ Keep this complete block inside the internal director-note input card. Do not co
 
 【禁止漂移】
 不得改变人物年龄、体型、服装颜色、关键道具、物体形态、场景方向、统一色彩和镜头质感。
+
+【镜头衔接】
+衔接类型：同镜头续接 / 有动机切镜
+继承景别与构图：
+继承摄影机状态：
+继承背景范围与光线：
+音频衔接：
 ```
 
 For the director-note image prompt, compress this block into one pose-lock sentence and an execution strip. For Seedance, include only the inherited start summary, one allowed pose change, camera behavior, and the highest-risk negative constraints. Expand details only to repair a specific observed failure.

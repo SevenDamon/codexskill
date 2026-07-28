@@ -29,7 +29,7 @@ Load this reference when generating a GPT Image 2 director-note image prompt. Lo
 3. 唯一关键镜头草图：{关键镜头1}
 4. 俯视调度草图：{调度关系}
 5. 表演指导：{表演指导摘要}
-6. 结尾衔接：{本段结束姿态摘要}
+6. 结尾衔接：{衔接类型}；{本段结束姿态摘要}；下一段继承{下一段继承摘要}
 
 底部增加一条很短的执行条：{执行条}
 

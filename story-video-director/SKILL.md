@@ -67,6 +67,10 @@ If the source is a Chinese lesson text or the user mentions classroom, teaching,
 - Treat all production assets as conditional inputs. A story, dialogue, or character-and-scene description is enough to begin; reference images, audio, stable tail frames, and previous director-note pages improve later stages but are not prerequisites for the first director-note page.
 - Treat a stable tail frame as a continuation-stage asset only. Treat a previous director-note page as a style/layout anchor only.
 - Lock voice continuity with a voice card when dialogue spans segments. Prefer one completed master audio track cut into semantic segments; when no audio exists, mark timing provisional until audio is finalized.
+- Classify every boundary as `same-shot continuation` or `motivated cut`. Do not let each generated segment silently establish a new shot.
+- For same-shot continuation, inherit the previous stable frame, framing, camera position, camera-motion state, pose, gaze, background crop, and lighting. A tail frame alone is insufficient if camera motion resets.
+- For motivated cuts, preserve screen direction, eye line, world-space pose, and continuous master audio; state the narrative reason for the cut.
+- Prefer hard cuts at meaningful action/dialogue boundaries. Use short dissolves only when adjacent images already match; do not use transitions to hide major identity, pose, or geography drift.
 
 ## Input And Seedance Modes
 
@@ -84,6 +88,8 @@ Before segmenting for Seedance, determine or ask for one generation mode when it
 - `暂只做导演板`: plan provisionally and confirm the generation mode before final timing.
 
 If Agent-mode audio exceeds 13 seconds, recommend semantic splitting. Never truncate automatically. If no clean split exists, ask whether to rewrite/re-record, adjust delivery, or explicitly remove a named portion. Include any audio padding inside the 13-second limit. Load [production-modes.md](references/production-modes.md) for templates and detailed rules.
+
+For any multi-segment or continuation task, load [shot-continuity.md](references/shot-continuity.md) and define the boundary type and inherited camera state before generating the next director-note or Seedance prompt.
 
 ## Real-Person Screening Gate
 
@@ -166,6 +172,7 @@ Output:
 - Allowed variation list: what may change by segment, such as emotion, pose, position, object state, weather, or lighting progression.
 - Pose-state baseline for every recurring character and a no-invented-support/furniture list.
 - Voice consistency card for every recurring speaking character.
+- Boundary map showing same-shot continuations versus motivated cuts, including inherited camera-motion state.
 
 Use [consistency-assets.md](references/consistency-assets.md) for detailed templates.
 
@@ -198,7 +205,7 @@ Use the card format in [output-templates.md](references/output-templates.md).
 
 Keep the internal card complete, but expose only the fields needed by each downstream artifact. Do not copy the entire card into the director-note image prompt.
 
-For multi-segment work, each card must include inherited reference assets, consistency locks, allowed variations, initial pose state, allowed pose deltas, required end pose, and forbidden inferred supports or props.
+For multi-segment work, each card must include inherited reference assets, consistency locks, allowed variations, initial pose state, allowed pose deltas, required end pose, forbidden inferred supports or props, boundary type, and inherited camera-motion state.
 
 ### 7. Generate Reference Image Prompts
 
@@ -232,6 +239,7 @@ When requested, generate one concise Seedance prompt from the same director-note
 - One allowed action or emotional change.
 - Camera behavior.
 - One compact negative sentence.
+- For same-shot continuation, one short instruction that the first frame must preserve the supplied stable frame without re-establishing the shot.
 
 Repeat only the three highest-risk constraints already visible on the director-note page. Keep the full continuity state in the internal card and expand it only when a previous generation failed for a specific reason.
 
@@ -247,6 +255,7 @@ When the user reports a generated video problem, first classify the likely sourc
 - GPT Image 2 prompt caused visual drift
 - Seedance text prompt made action order unclear
 - Negative constraints insufficient
+- Segment boundary mismatch: framing, camera motion, pose, light, or background crop resets between clips
 
 Then revise the smallest responsible artifact: consistency card, reference image prompt, segment split, director-note card, image prompt, Seedance prompt, or negative constraints. Do not rewrite the entire workflow unless the failure traces back to the segment design.
 

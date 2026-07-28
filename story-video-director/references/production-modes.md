@@ -43,6 +43,8 @@ Inspect supplied images/audio and treat them as source-of-truth anchors. State w
 
 Use a stable frame near the prior clip's end, not necessarily the literal final frame. Preserve the original scene/reference assets to prevent cumulative drift.
 
+Before generating the next clip, classify its boundary as same-shot continuation or motivated cut and record the inherited camera-motion state. See [shot-continuity.md](shot-continuity.md).
+
 ## Seedance Generation Modes
 
 Ask only when the mode is not already clear:
