@@ -23,9 +23,9 @@ Before producing outputs, check the user's request against these risks:
 - The target use case may be missing, making it unclear whether to optimize for classroom fidelity, cinematic impact, brand/story communication, or visual experimentation.
 - Multi-segment generation may drift if characters, objects, scene geography, and visual style are not locked with reference assets before segment prompt generation.
 - The request may skip the human selection/review point.
-- A named or visually identifiable real person may require identity screening before any downstream image or video prompt is written.
+- A named, visually identifiable, or possibly identifiable real person requires identity screening before any downstream director-note, image, or video prompt is written. When in doubt, ask before continuing.
 
-If missing information blocks responsible work, ask one concise question. Otherwise state default assumptions and continue.
+If missing information blocks responsible work, ask one concise question. Otherwise state default assumptions and continue. Real-person screening is a hard gate: if a supplied image/video frame, named character, historical setting, public-figure context, or strong visual cue could indicate a real identifiable person, ask the screening question first and do not generate downstream prompts until the user answers.
 
 ## Default Assumptions
 
@@ -93,9 +93,18 @@ For any multi-segment or continuation task, load [shot-continuity.md](references
 
 ## Real-Person Screening Gate
 
-Before generating a director-note image prompt, reference-image prompt, or Seedance prompt for any named or visually identifiable real person, ask one concise question:
+Before generating a director-note input card, director-note image prompt, reference-image prompt, Seedance prompt, action/performance breakdown, or camera-language plan for any named, visually identifiable, or possibly identifiable real person, ask one concise question:
 
-`该角色是否属于政治人物、英烈、明星、司法或公职人员、军警、医护、专家、媒体人、已故名人等真实可识别人物？`
+`这位人物是否是、或意图表现为可识别真实人物/历史人物/已故名人/公众人物？`
+
+Treat the gate as triggered when any of these are present:
+
+- The user names a real person, public figure, historical figure, or deceased famous person.
+- The user provides an image or video frame with a face, costume, setting, inscription, event, or composition that could reasonably identify a real person.
+- The user uses a role label or context that strongly implies a specific real person, even without naming them.
+- The model is unsure whether the person is fictional or real.
+
+Until the user answers, provide only risk notes, workflow recommendations, abstract segmentation, or questions. Do not produce concrete downstream prompts, camera instructions tied to the likeness, expression/action guidance for the identifiable figure, or alias-based prompts.
 
 - If no, continue using the provided name, subject to the target platform's rules.
 - If yes, keep the real name only in internal analysis and create stable neutral role aliases for every downstream generation prompt, such as `左侧青年`, `右侧黑衣人物`, `年长学者`, or `画面右侧说话者`.
@@ -103,7 +112,7 @@ Before generating a director-note image prompt, reference-image prompt, or Seeda
 - Do not use indirect identity hints such as `某著名先驱`, `与某人完全相同但不是某人`, or other wording designed to preserve recognition while hiding the name.
 - Do not claim aliasing makes generation permitted. If the reference image or intended likeness remains restricted, switch to a non-identifiable fictional proxy or provide planning-only output.
 
-Load [real-person-screening.md](references/real-person-screening.md) when a named or identifiable real person appears.
+Load [real-person-screening.md](references/real-person-screening.md) when a named, identifiable, or possibly identifiable real person appears.
 
 ## Workflow
 
@@ -119,7 +128,7 @@ Extract or infer:
 - Audience and content limits when relevant
 - Target total length or target passage
 - Whether the user needs multi-segment consistency and reference images
-- Whether any named or identifiable real person triggers the screening gate and, if so, the approved role aliases
+- Whether any named, identifiable, or possibly identifiable real person triggers the screening gate and, if so, the approved role aliases
 - Entry mode, available optional assets, Seedance generation mode, actual audio durations, and whether timing is locked or provisional
 - Requested outputs: diagnosis, segment table, director-note cards, GPT Image 2 prompts, Seedance prompts, or revision
 

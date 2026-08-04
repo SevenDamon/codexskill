@@ -1,16 +1,29 @@
 # Real-Person Screening
 
-Load this reference before writing any downstream image or video generation prompt that contains a named or visually identifiable real person.
+Load this reference before writing any downstream director-note, image, or video generation prompt for a character who is named, visually identifiable, or possibly identifiable as a real person.
+
+This is a hard gate. If the source includes an uploaded image/video frame, historical setting, public-figure context, distinctive face, costume, inscription, event, or composition that could reasonably point to a real person, ask first. Do not rely on aliases to skip the question.
 
 ## Screening Question
 
 Ask exactly one concise question before generating prompts:
 
 ```text
-该角色是否属于政治人物、英烈、明星、司法或公职人员、军警、医护、专家、媒体人、已故名人等真实可识别人物？
+这位人物是否是、或意图表现为可识别真实人物/历史人物/已故名人/公众人物？
 ```
 
 Do not ask when the user has already answered this question for the current character set.
+
+## Trigger Conditions
+
+Ask the screening question when any condition is true:
+
+- The user names a real person, public figure, historical figure, or deceased famous person.
+- The character appears in an uploaded image or video frame and could be recognized from face, clothing, posture, scene, text, or context.
+- The character is unnamed but the request strongly implies a specific real person.
+- You are unsure whether the character is fictional or real.
+
+Until the user answers, only provide risk notes, workflow suggestions, high-level feasibility diagnosis, or abstract segmentation. Do not provide director-note cards, GPT Image prompts, Seedance prompts, expression/action instructions, or camera-language plans that depend on the possible real person's likeness.
 
 ## Branches
 
@@ -26,6 +39,7 @@ Do not ask when the user has already answered this question for the current char
 - Use aliases in director-note image prompts, reference-image prompts, Seedance prompts, visible page text, continuity blocks, and negative constraints.
 - Maintain an internal mapping: `真实姓名 -> 稳定角色代号`. Never expose the left side in a downstream generation prompt.
 - Prefer position-based aliases when the composition is locked; prefer role-based aliases when screen position may change.
+- Remove direct and indirect identity cues from downstream prompts: real name, title, famous quote, exact event, signature costume detail, institution/event pairing, or resemblance language that preserves recognition.
 
 ## Boundaries
 
