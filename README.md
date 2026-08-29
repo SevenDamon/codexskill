@@ -145,6 +145,34 @@ If it fails, check these first:
 - Make sure Node.js provides `npx`; the skill runs Bun through `npx -y bun`.
 - Restart Codex after copying the skill directory.
 
+### html-ppt-author
+
+`html-ppt-author` 用于让 Agent 新建、改造或检查可离线运行、可继续编辑的 HTML 演示稿。它提供统一的页面契约、Lite/Full 配置说明、编辑器运行时、安装脚本和兼容性检查器。
+
+主要能力：
+
+- 约束可编辑文字、图片、图形、拖动缩放、保护元素和逐步出现顺序；
+- 为普通 HTML PPT 安装共享编辑工具栏；
+- 默认使用 Lite 浏览器编辑能力，并在需要保存源文件、PDF 或 PPTX 时切换到 Full；
+- 检查幻灯片 ID、16:9 画布、翻页接口、编辑器配置档和导出能力；
+- 明确区分 HTML 动效、静态 PDF、可编辑 PPTX 与保真图片版 PPTX 的能力边界。
+
+安装：
+
+```powershell
+git clone https://github.com/SevenDamon/codexskill.git
+New-Item -ItemType Directory -Force "$env:USERPROFILE\.codex\skills" | Out-Null
+Copy-Item -Recurse -Force ".\codexskill\html-ppt-author" "$env:USERPROFILE\.codex\skills\html-ppt-author"
+```
+
+安装后可以这样调用：
+
+```text
+Use $html-ppt-author to create an editable offline HTML presentation from this outline.
+```
+
+Skill 可独立提供 HTML PPT 制作规范和网页内编辑能力。需要 Windows 启动器、本地源文件写回以及 PDF/PPTX 导出后台时，请使用完整的 [HTML PPT Toolkit](https://github.com/SevenDamon/HTML-PPT-Toolkit)。
+
 ### product-kickoff-review
 
 Product kickoff review workflow for non-technical founders and AI-assisted builders.
