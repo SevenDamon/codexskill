@@ -1,5 +1,7 @@
 # Codex Skills
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 可复用的 Codex Skills 合集，覆盖证件照处理、内容配图、短视频制作、HTML 演示稿、产品立项与小红书图文卡片。每个目录都是可单独安装的 skill；请复制整个目录，而不只是 `SKILL.md`。
 
 ## Skills 介绍表
@@ -213,3 +215,14 @@ skill-name/
 ```
 
 只安装需要的 skill。仓库不包含外部 API 凭据、U²-Net 模型、用户原始素材或生成结果；各项依赖按对应 skill 配置。
+
+## 开源许可证
+
+除另有说明的内容外，本仓库的代码、技能文档和随附素材采用 [MIT License](LICENSE)，版权归 SevenDamon 所有。允许使用、复制、修改、分发和商业使用；分发副本或实质性部分时，须保留版权声明与许可证正文。软件按原样提供，不附带担保。
+
+- 每个 skill 目录均附有 `LICENSE`，单独复制或分发 skill 时请一并保留。
+- `xhs-longform-cards/assets/local-card-app/` 已声明使用 ISC，继续按该目录中的 [ISC License](xhs-longform-cards/assets/local-card-app/LICENSE) 授权；其 `package.json` 的许可证字段保持不变。
+- 外部依赖、另行下载的模型权重、API 服务及用户提供的素材适用各自许可证或服务条款，本仓库的 MIT 许可证不改变这些授权。
+- `html-ppt-author` 是同一维护者的 HTML PPT Toolkit 的便携发布副本；本许可证适用于本仓库内的发布内容，不修改外部仓库的许可证设置。
+
+安装说明中的目录复制应包含许可证文件；分享小红书本地应用时，也须保留其内置 ISC 许可证。
