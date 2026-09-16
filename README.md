@@ -1,239 +1,215 @@
 # Codex Skills
 
-This repository stores reusable Codex skills.
+可复用的 Codex Skills 合集，覆盖证件照处理、内容配图、短视频制作、HTML 演示稿、产品立项与小红书图文卡片。每个目录都是可单独安装的 skill；请复制整个目录，而不只是 `SKILL.md`。
 
-## Skills
+## Skills 介绍表
 
-### chinese-talking-head-recut
+| Skill | 介绍与适用场景 | 输入 → 输出 | 主要依赖 | 使用方法 |
+| --- | --- | --- | --- | --- |
+| [id-photo](id-photo/) | 人像抠图、换底、构图裁切及体积压缩，适合报名照和学籍照制作 | 正面人像及规格 → JPG / 透明 PNG，可批量多规格 | Python 3.10+、NumPy、Pillow、ONNX Runtime、U²-Net 模型 | [证件照使用方法](#id-photo) |
+| [chinese-talking-head-recut](chinese-talking-head-recut/) | 将散乱中文长口播按独立主题重组，处理口误、重复和话题跳跃 | 原视频及目标 → 竖屏短视频、字幕和封面 | 外部 `video-use` skill、FFmpeg / FFprobe、Python / Pillow；新转录需 ElevenLabs API key | [口播重剪使用方法](#chinese-talking-head-recut) |
+| [damon-zhihu-image](damon-zhihu-image/) | 根据文章语义生成知乎配图，支持摄影合成、扁平插画、极简白底和手绘速写 | 文章段落及风格 → 默认 16:9、2K 配图 | Node.js / npx、Bun（通过 npx 运行）、火山方舟 API key | [知乎配图使用方法](#damon-zhihu-image) |
+| [html-ppt-author](html-ppt-author/) | 新建、改造与检查可离线编辑的 HTML 演示稿，支持文字编辑、图片替换及拖动缩放 | 大纲或已有 HTML → 可编辑 HTML 演示稿及检查结果 | 浏览器；Full 保存与 PDF / PPTX 导出需外部 HTML PPT Toolkit | [HTML PPT 使用方法](#html-ppt-author) |
+| [product-kickoff-review](product-kickoff-review/) | 编码前审查付费意愿、定价、持续付费和 AI 辅助交付风险，再定义 MVP | 产品想法及业务背景 → 立项判断、MVP、PRD / 文档 / TODO 规划 | 可使用 skill 的 Agent；基础审查无需额外 API key | [立项审查使用方法](#product-kickoff-review) |
+| [story-video-director](story-video-director/) | 将故事或课文分解为可审阅的视觉事件，管理人物、场景、姿态和镜头连续性 | 故事、对白或场景描述 → 一致性卡、分段表、导演板及 Seedance 提示词 | 规划阶段使用 Agent；实际出图、生成视频需另备对应工具 | [故事导演使用方法](#story-video-director) |
+| [xhs-longform-cards](xhs-longform-cards/) | 将中文长文整理为小红书多图卡片，提供本地预览和 PNG 导出工具 | 中文长文 → 默认 450×600 PNG 卡片及本地预览 | Node.js、npm、Puppeteer 及可用浏览器环境 | [图文卡片使用方法](#xhs-longform-cards) |
 
-`chinese-talking-head-recut` 是一个面向中文散乱口播的重组剪辑 Skill。它会先通过逐字稿识别独立选题，再将一镜到底、存在口误、重复或话题跳跃的长口播，重组为一条或多条可发布的竖屏短视频。
+## 安装与调用
 
-项目功能：
+先克隆仓库，再按需安装。下面以 `id-photo` 为例，安装其他 skill 时替换目录名即可。更新已有安装前先备份本地修改。
 
-- 从长口播中拆分多个独立主题，而不是只按原时间线切片。
-- 重排钩子、证据、结论和 CTA，并在真正剪辑前让人确认结构。
-- 按词边界删除口误、重复、假开头、铃声和无关支线。
-- 生成中文语义字幕、黄色关键词和独立封面。
-- 逐个检查剪切边界、音频波形、字幕大小和最终输出规格。
-- 对“三个选择”“四个步骤”这类计数型叙事执行强制数量审计，避免标题承诺与正文不一致。
-
-适用于：
-
-- 没有写稿、一镜到底的中文口播；
-- 长口播拆成多条独立选题；
-- 口误、重复、停顿和干扰声较多的原始素材；
-- 需要重排叙事，而不是只做去停顿的口播。
-
-不适合直接处理以屏幕操作为主的课程录屏、直播回放、多机位剧情片，或已经剪好只需视觉包装的视频。
-
-依赖：
-
-- 已安装的 [`video-use`](https://github.com/browser-use/video-use) Skill，用于逐字稿、词边界切片、音频淡化和渲染；
-- FFmpeg / FFprobe；
-- Python 和 Pillow（封面脚本）；
-- ElevenLabs API key（仅在需要新转录时使用，已缓存逐字稿时不会重复调用）。
-
-Path:
-
-```text
-chinese-talking-head-recut/
-```
-
-Default invocation:
-
-```text
-Use $chinese-talking-head-recut to restructure this raw Chinese talking-head recording into publishable short videos.
-```
-
-Windows PowerShell 安装：
+### Windows PowerShell
 
 ```powershell
 git clone https://github.com/SevenDamon/codexskill.git
 cd codexskill
-New-Item -ItemType Directory -Force "$env:USERPROFILE\.codex\skills" | Out-Null
-Copy-Item -Recurse -Force .\chinese-talking-head-recut "$env:USERPROFILE\.codex\skills\chinese-talking-head-recut"
+$skillName = "id-photo"
+$skillsRoot = if ($env:CODEX_HOME) { Join-Path $env:CODEX_HOME "skills" } else { Join-Path $env:USERPROFILE ".codex\skills" }
+$destination = Join-Path $skillsRoot $skillName
+New-Item -ItemType Directory -Force $destination | Out-Null
+Copy-Item -Path ".\$skillName\*" -Destination $destination -Recurse -Force
 ```
 
-复制完成后重启 Codex，并确认 `video-use` 及其转录环境已正确配置。
-
-### damon-zhihu-image
-
-`damon-zhihu-image` 是一个用于生成知乎配图的 Codex Skill。它会把文章段落、知乎回答草稿或内容提纲转成具体的视觉 prompt，按用户选择的风格生成 16:9 配图，并通过内置脚本调用火山方舟 Seedream 出图。
-
-![damon-zhihu-image cover](damon-zhihu-image/assets/cover.png)
-
-项目功能：
-
-- 为知乎回答、文章段落、内容小节生成匹配配图。
-- 根据文本含义生成具体画面，而不是泛泛的装饰图。
-- 支持四种常用风格：摄影合成、扁平插画、极简白底、手绘速写。
-- API key 只放在本地 `.damon-skills/.env`，不会进入仓库。
-
-设计思路：
-
-- `SKILL.md` 负责告诉 Codex 什么时候使用、如何分析文本、如何选择风格。
-- `scripts/main.ts` 和 provider 文件负责稳定执行图片生成，避免每次都临时拼命令。
-- 默认使用 Seedream、16:9、2k 输出，适合知乎配图的展示和压缩场景。
-- 把 prompt 设计和图片调用分开：Codex 先理解内容并写 prompt，脚本再负责调用模型出图。
-
-使用方法：
-
-1. 把 `damon-zhihu-image/` 复制到本地 Codex skills 目录。
-2. 在 `$HOME/.damon-skills/.env` 写入火山方舟 API key：`ARK_API_KEY=...`。
-3. 重启 Codex。
-4. 让 Codex 使用 `$damon-zhihu-image`，并贴上需要配图的段落。
-
-Path:
-
-```text
-damon-zhihu-image/
-```
-
-Default invocation:
-
-```text
-Use $damon-zhihu-image to generate a 16:9 Zhihu cover image for this paragraph.
-```
-
-Quick start for Windows PowerShell:
-
-```powershell
-git clone https://github.com/SevenDamon/codexskill.git
-cd codexskill
-New-Item -ItemType Directory -Force "$env:USERPROFILE\.codex\skills" | Out-Null
-Copy-Item -Recurse -Force .\damon-zhihu-image "$env:USERPROFILE\.codex\skills\damon-zhihu-image"
-New-Item -ItemType Directory -Force "$env:USERPROFILE\.damon-skills\damon-imagine" | Out-Null
-Set-Content -Encoding UTF8 "$env:USERPROFILE\.damon-skills\.env" "ARK_API_KEY=replace-with-your-volcengine-ark-api-key"
-@'
----
-version: 1
-default_provider: seedream
-default_quality: 2k
-default_aspect_ratio: 16:9
----
-'@ | Set-Content -Encoding UTF8 "$env:USERPROFILE\.damon-skills\damon-imagine\EXTEND.md"
-```
-
-Quick start for macOS/Linux:
+### macOS / Linux
 
 ```bash
 git clone https://github.com/SevenDamon/codexskill.git
 cd codexskill
-mkdir -p "$HOME/.codex/skills" "$HOME/.damon-skills/damon-imagine"
-cp -R ./damon-zhihu-image "$HOME/.codex/skills/damon-zhihu-image"
-printf 'ARK_API_KEY=replace-with-your-volcengine-ark-api-key\n' > "$HOME/.damon-skills/.env"
-cat > "$HOME/.damon-skills/damon-imagine/EXTEND.md" << 'EOF'
+skill_name="id-photo"
+skills_root="${CODEX_HOME:-$HOME/.codex}/skills"
+mkdir -p "$skills_root/$skill_name"
+cp -R "./$skill_name/." "$skills_root/$skill_name/"
+```
+
+安装后重新开启 Codex 对话；若技能列表未刷新，重启客户端。下面的 `$skill-name` 是在 **Codex 对话框**输入的调用方式，不是终端命令。脚本命令示例均以仓库根目录为起点，除非另有说明。
+
+## 各 Skill 的使用方法
+
+### id-photo
+
+自动抠人像、换纯色底、按头部比例裁切，并尝试压缩到指定大小。支持内置尺寸、RGB 自定义底色和一次输出多规格。详细说明见 [README](id-photo/README.md)，处理边界见 [技术参考](id-photo/references/technique.md)。
+
+**准备：** 安装 Python 3.10+ 和依赖：
+
+```bash
+python -m pip install numpy onnxruntime Pillow
+python id-photo/scripts/idphoto.py --list
+```
+
+首次实际处理会下载 U²-Net 模型（约 168 MiB），默认缓存到 `~/.workbuddy/models/u2net.onnx`；这是原工具的共享缓存位置，在 Codex 下也保留。可通过 `--model` 指向其他位置的模型文件。模型就绪后，脚本在本机处理照片。
+
+**在 Codex 中调用：**
+
+```text
+使用 $id-photo，把附件中的正面半身照处理成 236×315 像素的证件照，
+底色 RGB(67,142,219)，JPG，不超过 60KB，不做肤色美白。
+请检查头顶留白、肩部完整度、头发边缘、实际尺寸及文件大小，输出到指定目录。
+```
+
+**也可直接运行：**
+
+```bash
+python id-photo/scripts/idphoto.py --src photo.jpg --spec "236x315@67-142-219" --out out.jpg --max-kb 60
+python id-photo/scripts/idphoto.py --src photo.jpg --spec "一寸+蓝,二寸+白,学籍照+淡蓝" --outdir ./out
+python id-photo/scripts/idphoto.py --src photo.jpg --spec "600x800" --out transparent.png
+```
+
+**注意：** 内置“一寸”为 236×315，“一寸标准”为 295×413，“学籍照”为 358×441；这些是工具预设，不代表所有单位的要求。请优先提供接收方要求的像素、底色、格式和体积。默认 `--gamma 0.68` 会整体提亮，`--gamma 1` 可关闭；`--skin-gamma` 仅在需要肤色美白时启用。全身照、侧脸、遮挡或复杂背景容易失败；压缩后仍可能超限，必须核验成品。工具不能保证通过报名或证件审核。
+
+### chinese-talking-head-recut
+
+先从逐字稿识别独立选题，再重排钩子、证据、结论与 CTA；确认结构后进行词边界剪切，生成中文字幕、关键词和封面。适合未写稿的一镜到底中文口播，不适合以屏幕操作为主的课程录屏。详见 [SKILL.md](chinese-talking-head-recut/SKILL.md)。
+
+**准备：** 另行安装 [video-use](https://github.com/browser-use/video-use)，配置 FFmpeg / FFprobe、Python / Pillow。只有新转录需要 ElevenLabs API key，已有缓存逐字稿可复用。
+
+**调用示例：**
+
+```text
+使用 $chinese-talking-head-recut 处理这段中文长口播：<视频路径>。
+面向初学者，拆成 2～3 条独立主题的竖屏短视频，每条约 60～90 秒。
+先提供选题和重组结构供我确认，再剪辑；去掉口误、重复、铃声和无关支线。
+最终交付字幕、关键词高亮、封面和成片，并核对标题中的数量承诺。
+```
+
+### damon-zhihu-image
+
+先理解文本含义并选择风格，再调用内置 Seedream 脚本生成图片。详见 [SKILL.md](damon-zhihu-image/SKILL.md)。
+
+**准备：** 安装 Node.js（含 `npx`），在用户目录 `.damon-skills/.env` 中设置：
+
+```dotenv
+ARK_API_KEY=replace-with-your-volcengine-ark-api-key
+```
+
+创建 `.damon-skills/damon-imagine/EXTEND.md`，内容如下：
+
+```yaml
 ---
 version: 1
 default_provider: seedream
 default_quality: 2k
 default_aspect_ratio: 16:9
 ---
-EOF
 ```
 
-After configuration, restart Codex and ask:
+Windows 用户目录通常是 `C:\Users\<用户名>`，macOS / Linux 为 `$HOME`。API key 仅保存在本机；已有配置请追加或修改对应字段，不要覆盖其他密钥。该 skill 会调用外部图片 API，需有可用额度。
+
+**调用示例：**
 
 ```text
-Use $damon-zhihu-image to generate a 16:9 Zhihu cover image for this paragraph:
-把你的文章段落粘贴在这里。
+使用 $damon-zhihu-image，为下面这段知乎回答生成一张 16:9 配图。
+风格选极简白底，不在图上叠加文字，突出“学习路径的选择”。
+正文：<粘贴回答段落及必要上下文>
 ```
 
-If it fails, check these first:
-
-- Replace `replace-with-your-volcengine-ark-api-key` with a real Volcengine Ark API key.
-- Make sure Node.js provides `npx`; the skill runs Bun through `npx -y bun`.
-- Restart Codex after copying the skill directory.
+![知乎配图示例](damon-zhihu-image/assets/cover.png)
 
 ### html-ppt-author
 
-`html-ppt-author` 用于让 Agent 新建、改造或检查可离线运行、可继续编辑的 HTML 演示稿。它提供统一的页面契约、Lite/Full 配置说明、编辑器运行时、安装脚本和兼容性检查器。
+适合新建演示稿、为已有 HTML 安装编辑器，或只检查兼容性。默认 Lite 支持网页内编辑；Full 的源文件保存、PDF / PPTX 导出需配合 [HTML PPT Toolkit](https://github.com/SevenDamon/HTML-PPT-Toolkit)。详见 [使用说明](html-ppt-author/README.md)。
 
-主要能力：
-
-- 约束可编辑文字、图片、图形、拖动缩放、保护元素和逐步出现顺序；
-- 为普通 HTML PPT 安装共享编辑工具栏；
-- 默认使用 Lite 浏览器编辑能力，并在需要保存源文件、PDF 或 PPTX 时切换到 Full；
-- 检查幻灯片 ID、16:9 画布、翻页接口、编辑器配置档和导出能力；
-- 明确区分 HTML 动效、静态 PDF、可编辑 PPTX 与保真图片版 PPTX 的能力边界。
-
-安装：
-
-```powershell
-git clone https://github.com/SevenDamon/codexskill.git
-New-Item -ItemType Directory -Force "$env:USERPROFILE\.codex\skills" | Out-Null
-Copy-Item -Recurse -Force ".\codexskill\html-ppt-author" "$env:USERPROFILE\.codex\skills\html-ppt-author"
-```
-
-安装后可以这样调用：
+**调用示例：**
 
 ```text
-Use $html-ppt-author to create an editable offline HTML presentation from this outline.
+使用 $html-ppt-author，根据以下大纲制作 8 页可离线编辑的 HTML 演示稿。
+使用 Lite，16:9，支持文字编辑、图片替换、拖动缩放和导出新版 HTML。
+输出到新目录，完成兼容性检查和浏览器实测。
+大纲：<粘贴大纲>
 ```
 
-Skill 可独立提供 HTML PPT 制作规范和网页内编辑能力。需要 Windows 启动器、本地源文件写回以及 PDF/PPTX 导出后台时，请使用完整的 [HTML PPT Toolkit](https://github.com/SevenDamon/HTML-PPT-Toolkit)。
+改造已有 HTML 时，请说明输入路径、要修改的内容、保留项以及 Lite / Full 选择。Full HTML 与同级 `html-ppt-editor/` 文件夹需一起移动或分享；没有工作台，仅安装工具栏无法获得导出后台。
 
 ### product-kickoff-review
 
-Product kickoff review workflow for non-technical founders and AI-assisted builders.
+面向非技术创始人和依赖 AI 构建产品的人。先判断谁付钱、为什么付钱、能否持续付钱，再检查交付风险；通过后才进入 MVP 和项目文档。详见 [SKILL.md](product-kickoff-review/SKILL.md)。
 
-Use it before coding a new product idea to check:
+**准备：** 提供目标客户、痛点、现有替代方案、定价假设、预算和时间限制。基础流程无需安装额外运行时。
 
-- whether anyone will pay;
-- what price can be justified;
-- whether customers will keep paying;
-- whether the project can be delivered safely with AI agents;
-- what PRD, architecture, data, prompt, evaluation, and TODO docs should exist before implementation.
-
-Path:
+**调用示例：**
 
 ```text
-product-kickoff-review/
+使用 $product-kickoff-review 审查这个产品想法，先不要写代码。
+产品：<一句话描述>；付费客户：<客户群>；痛点：<具体问题>。
+现有替代方案：<方案>；定价假设：<价格>；预算与时间：<限制>。
+先判断最可能失败的原因和需要验证的商业假设。
+如果值得继续，再定义最小 MVP、PRD、文档结构和 TODO。
 ```
 
-Default invocation:
-
-```text
-Use $product-kickoff-review to validate this product idea, define the MVP, and create the initial PRD/docs/TODO plan.
-```
+商业审查可能得出暂缓或缩小范围的结论；它不等于市场需求已经被验证，也不适用于已明确范围的小修复。
 
 ### story-video-director
 
-Story-to-video direction skill.
+将课文、故事、对白或短片构想变成分阶段的视频制作材料，重点是人物、道具、场景、声音和镜头连续性。详见 [README](story-video-director/README.md) 和 [SKILL.md](story-video-director/SKILL.md)。
+
+**准备：** 一段故事或场景描述即可开始；参考图片、音频和上一段尾帧可在后续补充。明确用途、风格、改编尺度和生成模式。实际图片、视频生成工具需另行准备。
+
+**调用示例：**
+
+```text
+使用 $story-video-director，将以下故事规划成 4 段 AI 视频。
+用途：课堂导入；风格：克制电影感；改编尺度：基本忠实原文。
+先做可视化可行性诊断、人物与场景一致性卡和分段表。
+我选择片段后，再生成导演板提示词和 Seedance 提示词。
+当前只做导演板，最终时长待生成模式和音频确认。
+故事：<粘贴原文>
+```
+
+交付的是制作规划和提示词，不能把它理解成一键生成成片。多段视频先锁定一致性资产，再制作分段提示词；时长按该 skill 中的生成模式约束确认。
 
 ### xhs-longform-cards
 
-Xiaohongshu long-form card generation skill.
+把中文长文拆成开场、核心内容和收尾卡片，默认输出 450×600 PNG；HTML 用于预览和截图。内置复古知识手账、极简现代、清新治愈手绘、可爱涂鸦、孟菲斯几何五种样式。详见 [SKILL.md](xhs-longform-cards/SKILL.md)。
 
-## Install A Skill Locally
+**调用示例：**
 
-Copy a skill directory into your local Codex skills folder:
-
-```powershell
-Copy-Item -Recurse .\damon-zhihu-image "$env:USERPROFILE\.codex\skills\damon-zhihu-image"
+```text
+使用 $xhs-longform-cards，把下面长文整理成 5 张小红书知识卡片。
+使用极简现代风格，每张只表达一个要点，尺寸 450×600。
+最终交付 PNG 图片和本地预览，检查中文显示及文字溢出。
+正文：<粘贴长文>
 ```
 
-例如安装中文口播重剪 Skill：
+**需要可反复使用的本地工具时：** 先安装 Node.js，再在仓库根目录执行。目标目录请选择新目录，脚手架拒绝覆盖同名文件。
 
 ```powershell
-Copy-Item -Recurse -Force .\chinese-talking-head-recut "$env:USERPROFILE\.codex\skills\chinese-talking-head-recut"
+node xhs-longform-cards/scripts/scaffold.js ../my-xhs-cards
+cd ../my-xhs-cards
+npm.cmd install
+node server.js
 ```
 
-Restart Codex if the skill list does not refresh automatically.
+macOS / Linux 将 `npm.cmd install` 改为 `npm install`。打开 `http://localhost:3000` 预览，下载单张或全部 PNG。首次安装依赖可能需要下载浏览器；长文应先压缩或拆页，避免固定画布溢出。
 
-## Repository Layout
-
-Each skill should keep the standard structure:
+## 仓库结构
 
 ```text
 skill-name/
-  SKILL.md
-  agents/
-    openai.yaml
-  references/
-    ...
-  scripts/
-    ...
+  SKILL.md          # 技能名称、触发条件与工作流程（必需）
+  README.md         # 面向使用者的说明（可选）
+  agents/           # Agent 元数据（可选）
+  references/       # 按需阅读的参考资料（可选）
+  scripts/          # 执行脚本（可选）
+  assets/           # 模板与静态素材（可选）
 ```
 
-Avoid adding extra files inside a skill directory unless they directly support that skill.
+只安装需要的 skill。仓库不包含外部 API 凭据、U²-Net 模型、用户原始素材或生成结果；各项依赖按对应 skill 配置。
