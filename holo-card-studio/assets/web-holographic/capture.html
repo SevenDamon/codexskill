@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>卡片动态视频录制</title>
+  <style>
+    body{margin:0;background:#20232a;color:white;font:16px system-ui,sans-serif}
+    button{margin:12px;padding:10px 20px;font:inherit;cursor:pointer}
+    #status{padding:12px}
+    iframe{display:block;border:0;width:720px;height:1330px}
+  </style>
+</head>
+<body>
+  <button id="start" type="button" disabled>录制动态卡片</button><span id="status">卡片加载中…</span>
+  <iframe id="card" src="./" title="交互卡片录制画面"></iframe>
+  <script src="./capture.js"></script>
+</body>
+</html>

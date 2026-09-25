@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-可复用的 Codex Skills 合集，覆盖证件照处理、内容配图、短视频制作、HTML 演示稿、产品立项与小红书图文卡片。每个目录都是可单独安装的 skill；请复制整个目录，而不只是 `SKILL.md`。
+可复用的 Codex Skills 合集，覆盖证件照处理、内容配图、全息卡片、短视频制作、HTML 演示稿、产品立项与小红书图文卡片。每个目录都是可单独安装的 skill；请复制整个目录，而不只是 `SKILL.md`。
 
 ## Skills 介绍表
 
@@ -12,6 +12,7 @@
 | [chinese-talking-head-recut](chinese-talking-head-recut/) | 将散乱中文长口播按独立主题重组，处理口误、重复和话题跳跃 | 原视频及目标 → 竖屏短视频、字幕和封面 | 外部 `video-use` skill、FFmpeg / FFprobe、Python / Pillow；新转录需 ElevenLabs API key | [口播重剪使用方法](#chinese-talking-head-recut) |
 | [damon-zhihu-image](damon-zhihu-image/) | 根据文章语义生成知乎配图，支持摄影合成、扁平插画、极简白底和手绘速写 | 文章段落及风格 → 默认 16:9、2K 配图 | Node.js / npx、Bun（通过 npx 运行）、火山方舟 API key | [知乎配图使用方法](#damon-zhihu-image) |
 | [html-ppt-author](html-ppt-author/) | 新建、改造与检查可离线编辑的 HTML 演示稿，支持文字编辑、图片替换及拖动缩放 | 大纲或已有 HTML → 可编辑 HTML 演示稿及检查结果 | 浏览器；Full 保存与 PDF / PPTX 导出需外部 HTML PPT Toolkit | [HTML PPT 使用方法](#html-ppt-author) |
+| [holo-card-studio](holo-card-studio/) | 制作可拖动的全息镭射卡和双图光栅卡；全息卡可选导出社群分享视频 | 卡片设定与素材 → Blender 工程、交互网页、渲染图；可选 MP4 | Python / Pillow、Node.js / npm、Blender；视频导出另需支持录制的浏览器与 FFmpeg | [全息卡使用方法](#holo-card-studio) |
 | [product-kickoff-review](product-kickoff-review/) | 编码前审查付费意愿、定价、持续付费和 AI 辅助交付风险，再定义 MVP | 产品想法及业务背景 → 立项判断、MVP、PRD / 文档 / TODO 规划 | 可使用 skill 的 Agent；基础审查无需额外 API key | [立项审查使用方法](#product-kickoff-review) |
 | [story-video-director](story-video-director/) | 将故事或课文分解为可审阅的视觉事件，管理人物、场景、姿态和镜头连续性 | 故事、对白或场景描述 → 一致性卡、分段表、导演板及 Seedance 提示词 | 规划阶段使用 Agent；实际出图、生成视频需另备对应工具 | [故事导演使用方法](#story-video-director) |
 | [xhs-longform-cards](xhs-longform-cards/) | 将中文长文整理为小红书多图卡片，提供本地预览和 PNG 导出工具 | 中文长文 → 默认 450×600 PNG 卡片及本地预览 | Node.js、npm、Puppeteer 及可用浏览器环境 | [图文卡片使用方法](#xhs-longform-cards) |
@@ -140,6 +141,25 @@ Windows 用户目录通常是 `C:\Users\<用户名>`，macOS / Linux 为 `$HOME`
 ```
 
 改造已有 HTML 时，请说明输入路径、要修改的内容、保留项以及 Lite / Full 选择。Full HTML 与同级 `html-ppt-editor/` 文件夹需一起移动或分享；没有工作台，仅安装工具栏无法获得导出后台。
+
+### holo-card-studio
+
+基于 [EverettFish/holo-card-studio](https://github.com/EverettFish/holo-card-studio) 的完整卡片 skill，保留原 MIT 许可证；本仓库加入了**可选的全息卡视频导出**。默认生成可拖动网页、Blender 工程和静态渲染图。视频会录下网页中的流光、转动和翻面，适合直接发到社群；MP4 不支持观众自行拖动。详见 [skill 说明](holo-card-studio/SKILL.md)和[中文使用说明](holo-card-studio/README.md)。
+
+**调用示例：**
+
+```text
+使用 $holo-card-studio 做一张中秋祝福镭射卡，并额外导出适合发社群的 MP4。
+请检查视频里的正反面文字、流光与翻面效果。
+```
+
+**视频导出：** 完成全息路线的项目后，在 `<project>/web` 运行 `node server.mjs`，打开本地 `/capture.html` 点击“录制动态卡片”，再从仓库根目录运行：
+
+```powershell
+python holo-card-studio/scripts/export_video.py --project <project-dir>
+```
+
+默认输出 `<project>/share-video.mp4`；FFmpeg 不在 PATH 时传入 `--ffmpeg <可执行文件>`。这一步目前仅支持全息路线，且需要浏览器支持 `canvas.captureStream` 和 `MediaRecorder`。
 
 ### product-kickoff-review
 
