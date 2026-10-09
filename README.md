@@ -222,6 +222,20 @@ node server.js
 
 macOS / Linux 将 `npm.cmd install` 改为 `npm install`。打开 `http://localhost:3000` 预览，下载单张或全部 PNG。首次安装依赖可能需要下载浏览器；长文应先压缩或拆页，避免固定画布溢出。
 
+### xhs-live-recut
+
+`xhs-live-recut` 用于把中文教学直播回放、课程录屏拆成独立短视频，保留原画面与原声，并制作横版或小红书 3:4 竖版封面。流程包含选题、来源映射、结构确认、试剪、画面与声音核验，以及封面手机缩略图检查。
+
+封面可使用 `scripts/make_screen_cover.py`（16:9）或 `scripts/make_portrait_cover.py`（3:4）。公开仓库只提供代码和文字风格指南；用户从 Canva/小红书收集的 8 张参考截图不在这里。获授权的设备可从私有仓库 `SevenDamon/codexskill-cover-references` 安装这些可选图片。没有私有图片时，skill 仍可根据文字指南和新提供的参考图工作。
+
+安装公开 skill：
+
+```powershell
+Copy-Item -Recurse -Force .\xhs-live-recut "$env:USERPROFILE\.codex\skills\xhs-live-recut"
+```
+
+运行封面脚本需要 Python、Pillow、FFmpeg（视频帧输入时）及可用的中文字体；视频合成流程另需 HyperFrames。私有图片的跨电脑安装步骤见私有素材仓库的 README。
+
 ## 仓库结构
 
 ```text

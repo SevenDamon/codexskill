@@ -2,3 +2,5 @@
 *.env
 .damon-skills/
 **/zhihu-images/
+__pycache__/
+*.pyc
