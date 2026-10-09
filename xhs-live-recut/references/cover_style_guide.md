@@ -1,6 +1,6 @@
 # Cover inspiration and adaptation
 
-This public guide describes eight optional inspiration styles. The user's original Canva/Xiaohongshu screenshots are **not included in this public skill**; an authorized user may install them separately in `references/cover-inspirations/`. The guide remains usable without those files. Reference screenshots may contain third-party design, photography, faces, logos, and copy. Inspect them for **abstract design decisions only**. Do not paste, trace, redistribute, or closely recreate their artwork, people, logo treatments, or exact text. Generated covers should use the user's source footage and original shapes/type composition.
+This public guide describes eight optional inspiration styles. The user's original Canva/Xiaohongshu screenshots are **not included in this public skill**; an authorized user may install them separately in `references/cover-inspirations/`. When installed, open the numbered PNGs relevant to the current topic and compare their hierarchy, spacing, and visual balance with the text cues below. The guide remains usable without those files. Reference screenshots may contain third-party design, photography, faces, logos, and copy. Inspect them for **abstract design decisions only**. Do not paste, trace, redistribute, or closely recreate their artwork, people, logo treatments, or exact text. Generated covers should use the user's source footage and original shapes/type composition.
 
 | Ref | Optional private filename | Useful design cue | When it fails for a screen-recorded lesson |
 |---|---|---|---|
