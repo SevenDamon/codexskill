@@ -9,6 +9,7 @@
 | Skill | 介绍与适用场景 | 输入 → 输出 | 主要依赖 | 使用方法 |
 | --- | --- | --- | --- | --- |
 | [id-photo](id-photo/) | 人像抠图、换底、构图裁切及体积压缩，适合报名照和学籍照制作 | 正面人像及规格 → JPG / 透明 PNG，可批量多规格 | Python 3.10+、NumPy、Pillow、ONNX Runtime、U²-Net 模型 | [证件照使用方法](#id-photo) |
+| [video-use](video-use/) | 基于逐字稿剪辑、拼接、配字幕；社交视频封面默认提供 16:9、4:3 横版和 3:4 竖版 | 视频素材及目标 → 成片、字幕、剪辑清单及所需封面 | FFmpeg / FFprobe、Python；新转录需 ElevenLabs API key；生成式封面需图片生成工具 | [视频剪辑使用方法](#video-use) |
 | [chinese-talking-head-recut](chinese-talking-head-recut/) | 将散乱中文长口播按独立主题重组，处理口误、重复和话题跳跃 | 原视频及目标 → 竖屏短视频、字幕和封面 | 外部 `video-use` skill、FFmpeg / FFprobe、Python / Pillow；新转录需 ElevenLabs API key | [口播重剪使用方法](#chinese-talking-head-recut) |
 | [damon-zhihu-image](damon-zhihu-image/) | 根据文章语义生成知乎配图，支持摄影合成、扁平插画、极简白底和手绘速写 | 文章段落及风格 → 默认 16:9、2K 配图 | Node.js / npx、Bun（通过 npx 运行）、火山方舟 API key | [知乎配图使用方法](#damon-zhihu-image) |
 | [html-ppt-author](html-ppt-author/) | 新建、改造与检查可离线编辑的 HTML 演示稿，支持文字编辑、图片替换及拖动缩放 | 大纲或已有 HTML → 可编辑 HTML 演示稿及检查结果 | 浏览器；Full 保存与 PDF / PPTX 导出需外部 HTML PPT Toolkit | [HTML PPT 使用方法](#html-ppt-author) |
@@ -47,6 +48,28 @@ cp -R "./$skill_name/." "$skills_root/$skill_name/"
 安装后重新开启 Codex 对话；若技能列表未刷新，重启客户端。下面的 `$skill-name` 是在 **Codex 对话框**输入的调用方式，不是终端命令。脚本命令示例均以仓库根目录为起点，除非另有说明。
 
 ## 各 Skill 的使用方法
+
+### video-use
+
+对话驱动的视频剪辑技能，支持逐字转录、按词边界剪切、多段拼接、音频淡化、字幕与检查。按上面的通用安装方法复制整个 `video-use/` 目录；依赖与转录配置参见随附的 [上游说明](video-use/README.md) 和 [安装说明](video-use/install.md)。API 凭据仅在本机配置。
+
+本仓库版本在用户请求社交视频封面、但未指定比例时，默认一并交付：
+
+| 比例（宽:高） | 方向 | 示例尺寸 |
+| --- | --- | --- |
+| 16:9 | 横版 | 1920×1080 |
+| 4:3 | 横版 | 1600×1200 |
+| 3:4 | 竖版 | 1080×1440 |
+
+指定比例或数量时，以明确要求为准。各版独立安排构图，保留已确认文案与角色形象；不能拉伸或裁掉重要内容。这些是封面交付预设，具体平台发布入口有尺寸要求时应按该要求处理。
+
+在 Codex 对话中调用：
+
+```text
+使用 $video-use 剪辑这些视频，并制作封面。
+```
+
+来源：[browser-use/video-use](https://github.com/browser-use/video-use)，基于提交 `92c2b34e44c205cbc2acae7f6ca7c1c219d5dd66`。本次仅在 `SKILL.md` 中追加封面交付规则，其他上游文件保持该提交原样；保留 [Browser Use 的 MIT 许可证](video-use/LICENSE)。
 
 ### id-photo
 
@@ -255,6 +278,7 @@ skill-name/
 除另有说明的内容外，本仓库的代码、技能文档和随附素材采用 [MIT License](LICENSE)，版权归 SevenDamon 所有。允许使用、复制、修改、分发和商业使用；分发副本或实质性部分时，须保留版权声明与许可证正文。软件按原样提供，不附带担保。
 
 - 每个 skill 目录均附有 `LICENSE`，单独复制或分发 skill 时请一并保留。
+- `video-use/` 源自 Browser Use，保留其原始 MIT 许可证与版权声明；本仓库附加的封面规则不改变上游文件的版权归属。
 - `xhs-longform-cards/assets/local-card-app/` 已声明使用 ISC，继续按该目录中的 [ISC License](xhs-longform-cards/assets/local-card-app/LICENSE) 授权；其 `package.json` 的许可证字段保持不变。
 - 外部依赖、另行下载的模型权重、API 服务及用户提供的素材适用各自许可证或服务条款，本仓库的 MIT 许可证不改变这些授权。
 - `html-ppt-author` 是同一维护者的 HTML PPT Toolkit 的便携发布副本；本许可证适用于本仓库内的发布内容，不修改外部仓库的许可证设置。
