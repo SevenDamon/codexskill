@@ -2,7 +2,9 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-可复用的 Codex Skills 合集，覆盖教育宣传视觉、证件照处理、内容配图、全息卡片、短视频制作、HTML 演示稿、产品立项与小红书图文卡片。每个目录都是可单独安装的 skill；请复制整个目录，而不只是 `SKILL.md`。
+可复用的 Codex Skills 合集，覆盖教育宣传视觉、证件照处理、内容配图、全息卡片、短视频制作、产品立项与小红书图文卡片。除注明已迁移的入口外，每个 Skill 目录都可单独安装；请复制整个目录，而不只是 `SKILL.md`。
+
+`html-ppt-author` 已迁移至 [HTML-PPT-Toolkit](https://github.com/SevenDamon/HTML-PPT-Toolkit)，本合集仅保留迁移说明，不再提供该 Skill 的安装文件。
 
 ## Skills 介绍表
 
@@ -13,7 +15,7 @@
 | [video-use](video-use/) | 基于逐字稿剪辑、拼接、配字幕；社交视频封面默认提供 16:9、4:3 横版和 3:4 竖版 | 视频素材及目标 → 成片、字幕、剪辑清单及所需封面 | FFmpeg / FFprobe、Python；新转录需 ElevenLabs API key；生成式封面需图片生成工具 | [视频剪辑使用方法](#video-use) |
 | [chinese-talking-head-recut](chinese-talking-head-recut/) | 将散乱中文长口播按独立主题重组，处理口误、重复和话题跳跃 | 原视频及目标 → 竖屏短视频、字幕和封面 | 外部 `video-use` skill、FFmpeg / FFprobe、Python / Pillow；新转录需 ElevenLabs API key | [口播重剪使用方法](#chinese-talking-head-recut) |
 | [damon-zhihu-image](damon-zhihu-image/) | 根据文章语义生成知乎配图，支持摄影合成、扁平插画、极简白底和手绘速写 | 文章段落及风格 → 默认 16:9、2K 配图 | Node.js / npx、Bun（通过 npx 运行）、火山方舟 API key | [知乎配图使用方法](#damon-zhihu-image) |
-| [html-ppt-author](html-ppt-author/) | 新建、改造与检查可离线编辑的 HTML 演示稿，支持文字编辑、图片替换及拖动缩放 | 大纲或已有 HTML → 可编辑 HTML 演示稿及检查结果 | 浏览器；Full 保存与 PDF / PPTX 导出需外部 HTML PPT Toolkit | [HTML PPT 使用方法](#html-ppt-author) |
+| [html-ppt-author（已迁移）](html-ppt-author/) | 可编辑 HTML 演示稿 Skill，已与工具箱统一维护 | 大纲或已有 HTML → 可编辑 HTML 演示稿 | 依赖与安装要求见新仓库 | [新仓库安装说明](https://github.com/SevenDamon/HTML-PPT-Toolkit/tree/main/skill-package/html-ppt-author) |
 | [holo-card-studio](holo-card-studio/) | 制作可拖动的全息镭射卡和双图光栅卡；全息卡可选导出社群分享视频 | 卡片设定与素材 → Blender 工程、交互网页、渲染图；可选 MP4 | Python / Pillow、Node.js / npm、Blender；视频导出另需支持录制的浏览器与 FFmpeg | [全息卡使用方法](#holo-card-studio) |
 | [product-kickoff-review](product-kickoff-review/) | 编码前审查付费意愿、定价、持续付费和 AI 辅助交付风险，再定义 MVP | 产品想法及业务背景 → 立项判断、MVP、PRD / 文档 / TODO 规划 | 可使用 skill 的 Agent；基础审查无需额外 API key | [立项审查使用方法](#product-kickoff-review) |
 | [story-video-director](story-video-director/) | 将故事或课文分解为可审阅的视觉事件，管理人物、场景、姿态和镜头连续性 | 故事、对白或场景描述 → 一致性卡、分段表、导演板及 Seedance 提示词 | 规划阶段使用 Agent；实际出图、生成视频需另备对应工具 | [故事导演使用方法](#story-video-director) |
@@ -167,18 +169,9 @@ Windows 用户目录通常是 `C:\Users\<用户名>`，macOS / Linux 为 `$HOME`
 
 ### html-ppt-author
 
-适合新建演示稿、为已有 HTML 安装编辑器，或只检查兼容性。默认 Lite 支持网页内编辑；Full 的源文件保存、PDF / PPTX 导出需配合 [HTML PPT Toolkit](https://github.com/SevenDamon/HTML-PPT-Toolkit)。详见 [使用说明](html-ppt-author/README.md)。
+已迁移至 [HTML-PPT-Toolkit](https://github.com/SevenDamon/HTML-PPT-Toolkit)，Skill、共享编辑器与 Windows 工具箱在新仓库统一维护。
 
-**调用示例：**
-
-```text
-使用 $html-ppt-author，根据以下大纲制作 8 页可离线编辑的 HTML 演示稿。
-使用 Lite，16:9，支持文字编辑、图片替换、拖动缩放和导出新版 HTML。
-输出到新目录，完成兼容性检查和浏览器实测。
-大纲：<粘贴大纲>
-```
-
-改造已有 HTML 时，请说明输入路径、要修改的内容、保留项以及 Lite / Full 选择。Full HTML 与同级 `html-ppt-editor/` 文件夹需一起移动或分享；没有工作台，仅安装工具栏无法获得导出后台。
+请按 [新仓库的 Skill 安装与使用说明](https://github.com/SevenDamon/HTML-PPT-Toolkit/tree/main/skill-package/html-ppt-author) 获取完整安装包。此合集的 `html-ppt-author/` 仅保留迁移 README，不适用上面的通用复制安装命令。已安装的 Skill 不会因本次清理被卸载，后续升级请从新仓库获取。
 
 ### holo-card-studio
 
@@ -292,10 +285,10 @@ skill-name/
 
 除另有说明的内容外，本仓库的代码、技能文档和随附素材采用 [MIT License](LICENSE)，版权归 SevenDamon 所有。允许使用、复制、修改、分发和商业使用；分发副本或实质性部分时，须保留版权声明与许可证正文。软件按原样提供，不附带担保。
 
-- 每个 skill 目录均附有 `LICENSE`，单独复制或分发 skill 时请一并保留。
+- 每个可安装的 Skill 目录均附有 `LICENSE`，单独复制或分发 Skill 时请一并保留；仅保留迁移说明的目录不属于安装包。
 - `video-use/` 源自 Browser Use，保留其原始 MIT 许可证与版权声明；本仓库附加的封面规则不改变上游文件的版权归属。
 - `xhs-longform-cards/assets/local-card-app/` 已声明使用 ISC，继续按该目录中的 [ISC License](xhs-longform-cards/assets/local-card-app/LICENSE) 授权；其 `package.json` 的许可证字段保持不变。
 - 外部依赖、另行下载的模型权重、API 服务及用户提供的素材适用各自许可证或服务条款，本仓库的 MIT 许可证不改变这些授权。
-- `html-ppt-author` 是同一维护者的 HTML PPT Toolkit 的便携发布副本；本许可证适用于本仓库内的发布内容，不修改外部仓库的许可证设置。
+- `html-ppt-author` 的代码及完整安装包已迁移至 [HTML-PPT-Toolkit](https://github.com/SevenDamon/HTML-PPT-Toolkit)，请遵循新仓库随包许可证；本合集只保留迁移说明。
 
 安装说明中的目录复制应包含许可证文件；分享小红书本地应用时，也须保留其内置 ISC 许可证。
