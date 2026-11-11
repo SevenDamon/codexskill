@@ -1,0 +1,4 @@
+interface:
+  display_name: "教育宣传海报与名片"
+  short_description: "制作教师AI业务的宣传海报与个人名片，交付图片和可编辑源文件"
+  default_prompt: "使用 $education-promo-visuals，帮我根据这次讨论的内容制作宣传海报或个人名片。"

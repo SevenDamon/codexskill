@@ -2,12 +2,13 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-可复用的 Codex Skills 合集，覆盖证件照处理、内容配图、全息卡片、短视频制作、HTML 演示稿、产品立项与小红书图文卡片。每个目录都是可单独安装的 skill；请复制整个目录，而不只是 `SKILL.md`。
+可复用的 Codex Skills 合集，覆盖教育宣传视觉、证件照处理、内容配图、全息卡片、短视频制作、HTML 演示稿、产品立项与小红书图文卡片。每个目录都是可单独安装的 skill；请复制整个目录，而不只是 `SKILL.md`。
 
 ## Skills 介绍表
 
 | Skill | 介绍与适用场景 | 输入 → 输出 | 主要依赖 | 使用方法 |
 | --- | --- | --- | --- | --- |
+| [教育宣传海报与名片](education-promo-visuals/) | 从讨论内容制作教师 AI 业务的训练营海报或个人宣传名片，内含用户品牌资料 | 用途、文案及发布渠道 → 可编辑源文件、PNG | 可使用 skill 的 Agent；实际出图需可用的设计与渲染工具 | [教育宣传视觉使用方法](#教育宣传视觉使用方法) |
 | [id-photo](id-photo/) | 人像抠图、换底、构图裁切及体积压缩，适合报名照和学籍照制作 | 正面人像及规格 → JPG / 透明 PNG，可批量多规格 | Python 3.10+、NumPy、Pillow、ONNX Runtime、U²-Net 模型 | [证件照使用方法](#id-photo) |
 | [video-use](video-use/) | 基于逐字稿剪辑、拼接、配字幕；社交视频封面默认提供 16:9、4:3 横版和 3:4 竖版 | 视频素材及目标 → 成片、字幕、剪辑清单及所需封面 | FFmpeg / FFprobe、Python；新转录需 ElevenLabs API key；生成式封面需图片生成工具 | [视频剪辑使用方法](#video-use) |
 | [chinese-talking-head-recut](chinese-talking-head-recut/) | 将散乱中文长口播按独立主题重组，处理口误、重复和话题跳跃 | 原视频及目标 → 竖屏短视频、字幕和封面 | 外部 `video-use` skill、FFmpeg / FFprobe、Python / Pillow；新转录需 ElevenLabs API key | [口播重剪使用方法](#chinese-talking-head-recut) |
@@ -48,6 +49,20 @@ cp -R "./$skill_name/." "$skills_root/$skill_name/"
 安装后重新开启 Codex 对话；若技能列表未刷新，重启客户端。下面的 `$skill-name` 是在 **Codex 对话框**输入的调用方式，不是终端命令。脚本命令示例均以仓库根目录为起点，除非另有说明。
 
 ## 各 Skill 的使用方法
+
+### 教育宣传视觉使用方法
+
+目录名和调用标识是 `education-promo-visuals`，Codex 中显示为“教育宣传海报与名片”。它根据当次传播目标和确认文案，设计训练营海报或个人宣传名片，并检查数字、可读性和最终导出图。可先讨论结构，也可在内容明确时直接出图。详见 [SKILL.md](education-promo-visuals/SKILL.md)。
+
+本 skill 是段帅卫的个人版本，包含截至 2026 年 11 月的品牌资料，**公开仓库不附带人像文件**。需要人物形象时，请在对话中提供照片或自行在本机 `assets/portrait.png` 放入已获授权的照片。换人使用时应替换 `references/brand-and-examples.md`；每次发布前仍需核对日期、价格、资历和联系方式。
+
+**调用示例：**
+
+```text
+使用 $education-promo-visuals，为下期教师 AI 训练营做一张朋友圈竖版海报。
+主题：<主题>；时间：<日期>；适合人群：<人群>；报名方式：<方式>。
+先检查文案和信息层级，再交付可编辑源文件与 PNG。
+```
 
 ### video-use
 
