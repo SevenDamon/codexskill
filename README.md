@@ -255,7 +255,11 @@ macOS / Linux 将 `npm.cmd install` 改为 `npm install`。打开 `http://localh
 
 ### xhs-live-recut
 
-`xhs-live-recut` 用于把中文教学直播回放、课程录屏拆成独立短视频，保留原画面与原声，并制作横版或小红书 3:4 竖版封面。流程包含选题、来源映射、结构确认、试剪、画面与声音核验，以及封面手机缩略图检查。
+`xhs-live-recut` 用于把中文教学直播回放、课程录屏拆成独立短视频，保留原画面与原声。流程包含选题、来源映射、结构确认、试剪、画面与声音核验，以及封面手机缩略图检查。
+
+技能会在对应阶段询问是否加入配合讲解的语义动效、16:9／4:3／3:4封面及真实人像，以及视频号、小红书、抖音的发布标题、简短说明和末尾话题。同系列已确认的设置会继续沿用。标题按用户确认的上限核对，可复用的视频号16字、小红书和抖音20字设置保存于项目配置。具体流程见[可选动效、封面与发布配套](xhs-live-recut/references/optional_packaging.md)。
+
+发布文案可整理为 `publish-package.json`，使用 `python xhs-live-recut/scripts/validate_publish_copy.py <文件路径>` 检查平台覆盖、标题字数、说明和话题字段。
 
 封面可使用 `scripts/make_screen_cover.py`（16:9）或 `scripts/make_portrait_cover.py`（3:4）。公开仓库只提供代码和文字风格指南；用户从 Canva/小红书收集的 8 张参考截图不在这里。获授权的设备可从私有仓库 `SevenDamon/codexskill-cover-references` 安装这些可选图片。没有私有图片时，skill 仍可根据文字指南和新提供的参考图工作。
 

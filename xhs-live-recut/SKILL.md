@@ -1,6 +1,6 @@
 ---
 name: xhs-live-recut
-description: Turn Chinese education, STEM, AI course livestream replays, screen recordings, or SRT transcripts into Xiaohongshu-style short promo videos, source-frame covers, and HyperFrames compositions. Use when the user asks to mine independent topics, preserve original picture and voice, render clips, or make publishable covers from a livestream or screen recording.
+description: Recut Chinese education, STEM, and AI livestreams or screen recordings into original-audio short videos, with optional semantic motion, speaker covers, and publishing copy for WeChat Channels, Xiaohongshu, and Douyin. Use for extracting topics, editing synchronized source clips, or preparing their covers and release materials.
 ---
 
 # XHS Live Recut
@@ -12,11 +12,13 @@ Turn long Chinese education livestreams into short, platform-native videos. Defa
 - Name likely failure points first: weak topic, thin insight, unsupported rewrite, unreadable screen capture, robotic voice, or pasted-on CTA.
 - Prefer an adjacent SRT for sources longer than 20 minutes. Before running expensive transcription, state the expected cost/time and obtain approval.
 - Default full-screen PPT, browser, code, and software demos to horizontal 16:9. Use 9:16 only when requested and redesign the layout with pan/zoom, split panels, or recreated UI; never crop blindly.
+- For horizontal screen footage, choose the delivery frame by information density and publishing context, not by an assumed Xiaohongshu algorithm preference. Read [references/screen_format_workflow.md](references/screen_format_workflow.md) before committing to a horizontal or vertical render.
 - Give one concrete, useful idea in every promo. Reveal a framework or key judgment while reserving the full implementation for the replay/product.
 - Preserve provenance. Mark every material claim as source-derived, compressed, combined, or newly written.
 - Treat `source-recut` and `remake` as separate modes. Default to `source-recut`; never replace usable original speech with TTS merely because a voice engine is available.
 - In `source-recut`, keep picture and voice from the same intervals. Never mute the source, reorder unrelated screen moments under new narration, or turn the livestream into a motion-graphics explainer unless explicitly requested.
 - Never render before the required content approvals. After the pilot and project profile are approved, automate within the frozen profile instead of asking repetitive questions.
+- At the relevant stage, offer semantic motion, a cover set with a real speaker portrait, and multi-platform publishing copy. Ask about options that remain undecided, then wait before executing those additions. Reuse explicit requests and approved series choices. Record accepted and declined options in the profile. Read [references/optional_packaging.md](references/optional_packaging.md) for the stage-specific questions and the tested series settings.
 
 ## Inputs
 
@@ -34,6 +36,7 @@ Optional:
 - `product_context`: buyer, promise, linked product/replay, and disclosure boundary.
 - `target_count`: default to 3–5 topic briefs and one pilot render.
 - `project_profile`: an approved reusable profile from a prior video in the same series.
+- `publishing_platforms`, `title_limits`, `cover_variants`, `portrait_asset`, and `motion_references`: optional packaging choices. Resolve these from the current request and approved profile, then ask about remaining choices when their workflow stage is reached.
 
 ## Workflow
 
@@ -74,6 +77,12 @@ Optional:
 - Create or update `project-profile.yaml` using `references/workflow_artifacts.md`.
 - For a new series, stop for visual approval before rendering. For an approved existing profile, reuse it without asking again unless the source makes it unreadable.
 
+### 4.5 Offer speech-aligned semantic motion
+
+- If undecided, ask whether to add designed overlays that follow the original explanation, such as a left gradient panel with focus cards, quoted feedback, chat bubbles, or step reveals. Proceed with already requested or approved motion.
+- Read the motion section of [references/optional_packaging.md](references/optional_packaging.md) when selected. Match each element to the spoken point and its time range, show a representative sample, and reuse the approved motion profile across the series.
+- When the user supplies an external motion library, shortlist suitable components before integration and record the implementation source. Distinguish actual template use from an independently authored composition inspired by its visual concept.
+
 ### 5. Write the short video
 
 - For `source-recut`, target 40–60 seconds unless the source supports a clean shorter cut. Select verbatim source spans, preserve their order by default, and cut only at phrase or sentence boundaries. Use the original voice as narration.
@@ -92,6 +101,7 @@ Optional:
 - In `remake`, use separate narration audio.
 - Prefer full-width screen captures in 16:9. Add concise callouts without covering important UI.
 - For 9:16, use designed containers, staged pan/zoom, or recreated panels; keep text and controls legible at delivery size.
+- When a clip mixes portrait talking head and landscape screen footage, keep the portrait speaker full-frame and recompose only the screen insert. Do not shrink the whole lesson to fit one static template.
 - Only in `remake`, prefer Edge neural voices for Chinese when available: `zh-CN-XiaoxiaoNeural`, `zh-CN-YunxiNeural`, or `zh-CN-XiaoyiNeural`. Avoid `zf_xiaobei` unless requested.
 - If synthetic voice is unsuitable, deliver a human-recording script and wait for audio before the final voiced render.
 - Apply captions last so overlays cannot hide them.
@@ -100,15 +110,18 @@ Optional:
 
 - Run relevant HyperFrames lint, validate, and draft-render checks.
 - Inspect hook, main evidence, CTA, first/last two seconds, and every significant screenshot transition.
+- For horizontal-source inserts, check the selected frame strategy and privacy conditions in [references/screen_format_workflow.md](references/screen_format_workflow.md); a no-QR detector result is not a substitute for visual review.
 - Verify audio presence, duration, aspect ratio, caption safe area, font rendering, source-screen readability, and factual consistency with `source-map.md`.
 - For every `source-recut` jump cut, re-transcribe or audition the assembled proxy to check sentence order, missing syllables, duplicated words, and A/V duration agreement. FFmpeg timestamp warnings are not proof of corruption, but must trigger this check.
 - Present one pilot first. Stop for approval before batch production.
 
 ### 7.5 Make a publishable cover when requested
 
+- After the clip or series style is accepted, ask whether to make coordinated covers if that choice remains undecided. In that question, offer 16:9, 4:3, and 3:4 options and ask whether to include the user's real portrait. A current request for covers already authorizes cover work. Resolve only the remaining ratio and portrait choices.
+- Read the cover section of [references/optional_packaging.md](references/optional_packaging.md) for three-ratio sizing, reusable portrait assets, and editable-source delivery. Render the chosen variants and repeat full-size/mobile review after portrait insertion.
 - Choose a source frame that actually shows the video's topic. Treat the cover title as an editorial claim that must be supported by the clip.
 - Keep video aspect and cover aspect separate. A 16:9 source-recut video can have a 3:4 portrait cover, but the cover does not turn the video itself vertical. Recompose the title, source evidence, and optional speaker bubble on the portrait canvas; never just crop the finished horizontal cover.
-- When the user supplies cover examples or requests varied styles, read [references/cover_style_guide.md](references/cover_style_guide.md). If optional private screenshots are installed in `references/cover-inspirations/`, visually inspect only the relevant numbered PNGs before choosing a layout; the text guide remains usable without them. Treat any reference images as visual cues, never assets to paste into output. Select a style by topic evidence and available image quality, and keep the cover title readable at mobile thumbnail size. Do not force one palette onto every clip when the user asks for variety.
+- When the user supplies cover examples or requests varied styles, read [references/cover_style_guide.md](references/cover_style_guide.md). If optional private screenshots are installed in `references/cover-inspirations/`, visually inspect only the relevant numbered PNGs before choosing a layout. The text guide remains usable without them. Treat reference images as visual cues and create output from the user's own source assets. Select a style by topic evidence and available image quality, and keep the cover title readable at mobile thumbnail size. Adapt palettes to the approved series and the topic.
 - For text-heavy lesson screens, first try one clear headline, one meaningful source-screen fragment, and intentional empty space. Remove duplicate headings, keyword lists, captions, and decorative labels before merely shrinking them. This is a tested preference for the user's current series, not a universal template; change composition when the source or user preference warrants it.
 - For 16:9 screen recordings, keep the topic-bearing UI inside a framed panel and put a short, readable title outside it. Remove browser chrome and taskbar with an explicit source-pixel crop; use opaque redaction rectangles for visible private paths, accounts, or names. Do not claim that cropping replaces a full privacy review.
 - Use [scripts/make_screen_cover.py](scripts/make_screen_cover.py) for the existing 16:9 layout. For a simple 3:4 layout with a headline and one evidence panel, use [scripts/make_portrait_cover.py](scripts/make_portrait_cover.py) and the manifest guidance in [references/cover_style_guide.md](references/cover_style_guide.md). Both scripts use source-pixel crops/redactions and refuse to overwrite without `--overwrite`. Use a custom composition when the source cannot fit the preset legibly.
@@ -120,6 +133,13 @@ Optional:
 - Reuse approved video aspect, font files, caption layout, voice, CTA policy, and disclosure boundary across the series. Track cover aspect separately from video aspect.
 - Reuse approved cover hierarchy and series marker, but allow per-video palette and arrangement when the user has asked for varied covers. Do not turn one successful cover into a universal template. Keep per-video changes grounded in topic, evidence, screenshot framing, and legibility.
 - Reopen approval when a requested change alters the frozen brand/content policy or when the source cannot work within the preset.
+
+### 8.5 Offer platform-ready publishing copy
+
+- After the clips are accepted, ask whether to prepare platform titles, a short description, and topics appended at its end if this choice remains undecided. Offer WeChat Channels, Xiaohongshu, and Douyin, and resolve the user's actual destinations.
+- Read the publishing section of [references/optional_packaging.md](references/optional_packaging.md). Use user-confirmed title limits, verify every title, and save a copyable version for each selected clip/platform pair in `视频发布文案.md`.
+- The confirmed 2026-11 series used title limits of 16 characters for WeChat Channels and 20 for Xiaohongshu and Douyin. Offer these as reusable settings for a new project, and apply the current user's requirements or publishing interface when they differ.
+- Package generation is complete when the selected materials are ready to copy. Sending or publishing requires the user's corresponding authorization.
 
 ## Outputs
 
@@ -139,3 +159,5 @@ For each developed video, preserve:
 ```
 
 For a pilot or final render, report file path, duration/aspect, voice, profile status, source-map risks, validation performed, and the next required decision.
+
+For approved optional packaging, also deliver the chosen cover PNGs and editable sources with local assets, a cover overview/mobile preview, and `视频发布文案.md` grouped by clip and platform. Include `publish-package.json` when using the title validator. The profile records which options were offered, accepted, and declined.

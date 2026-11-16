@@ -21,6 +21,8 @@ Start with the claim and proof in the actual clip, then choose visual grammar. F
 
 Treat 16:9 horizontal and 3:4 portrait as separate compositions. The portrait cover should use a cropped **evidence region**, not a shrunk full desktop; make the title readable at roughly 270×360 preview size. Avoid putting key text against the edges because feed and profile previews may crop differently. Verify the actual publication crop in the user's app before publishing. A portrait cover alone does not change the video's 16:9 playback.
 
+When the user selects a three-format set, include a separately composed 4:3 landscape cover at 1600×1200, alongside the selected 16:9 and 3:4 versions. When the user selects a real speaker portrait, reflow the evidence area around the person and review all selected ratios again. The stage-specific questions, tested sizes, portrait-asset workflow, and editable-source delivery are in [optional_packaging.md](optional_packaging.md).
+
 Use explicit title and small-label font sizes, record the selected font file and license, and inspect full-resolution and mobile previews. Redact private account names, file paths, and project identifiers in source screenshots before they enter a cover. Do not promote stale UI prices, model multipliers, or unverified performance numbers into headline claims.
 
 ## Tested sparse direction for screen lessons

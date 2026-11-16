@@ -1,4 +1,4 @@
 interface:
-  display_name: "小红书直播原声精剪"
-  short_description: "把中文直播按原画面原声分段索引并精剪成可追溯的短视频样片"
-  default_prompt: "Use $xhs-live-recut to index this livestream once, select a small source segment, and build one original-picture original-voice recut pilot."
+  display_name: "直播原声精剪与发布配套"
+  short_description: "中文直播原声精剪，在对应步骤询问是否加入动效、人像封面和多平台发布文案"
+  default_prompt: "使用 $xhs-live-recut 精剪这场直播，并在对应步骤询问我是否需要语义动效、人像封面和视频号、小红书、抖音发布文案。"
